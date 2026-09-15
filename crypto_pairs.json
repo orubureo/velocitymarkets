@@ -1,0 +1,602 @@
+[
+    {
+        "symbol": "BTCUSDT",
+        "display_name": "BTC/USDT",
+        "coingecko_id": "bitcoin",
+        "tradingview_symbol": "BINANCE:BTCUSDT"
+    },
+    {
+        "symbol": "ETHUSDT",
+        "display_name": "ETH/USDT",
+        "coingecko_id": "ethereum",
+        "tradingview_symbol": "BINANCE:ETHUSDT"
+    },
+    {
+        "symbol": "BNBUSDT",
+        "display_name": "BNB/USDT",
+        "coingecko_id": "binancecoin",
+        "tradingview_symbol": "BINANCE:BNBUSDT"
+    },
+    {
+        "symbol": "XRPUSDT",
+        "display_name": "XRP/USDT",
+        "coingecko_id": "ripple",
+        "tradingview_symbol": "BINANCE:XRPUSDT"
+    },
+    {
+        "symbol": "SOLUSDT",
+        "display_name": "SOL/USDT",
+        "coingecko_id": "solana",
+        "tradingview_symbol": "BINANCE:SOLUSDT"
+    },
+    {
+        "symbol": "TRXUSDT",
+        "display_name": "TRX/USDT",
+        "coingecko_id": "tron",
+        "tradingview_symbol": "BINANCE:TRXUSDT"
+    },
+    {
+        "symbol": "FIGR_HELOCUSDT",
+        "display_name": "FIGR_HELOC/USDT",
+        "coingecko_id": "figure-heloc",
+        "tradingview_symbol": "BINANCE:FIGR_HELOCUSDT"
+    },
+    {
+        "symbol": "HYPEUSDT",
+        "display_name": "HYPE/USDT",
+        "coingecko_id": "hyperliquid",
+        "tradingview_symbol": "BINANCE:HYPEUSDT"
+    },
+    {
+        "symbol": "DOGEUSDT",
+        "display_name": "DOGE/USDT",
+        "coingecko_id": "dogecoin",
+        "tradingview_symbol": "BINANCE:DOGEUSDT"
+    },
+    {
+        "symbol": "ZECUSDT",
+        "display_name": "ZEC/USDT",
+        "coingecko_id": "zcash",
+        "tradingview_symbol": "BINANCE:ZECUSDT"
+    },
+    {
+        "symbol": "RAINUSDT",
+        "display_name": "RAIN/USDT",
+        "coingecko_id": "rain",
+        "tradingview_symbol": "BINANCE:RAINUSDT"
+    },
+    {
+        "symbol": "USDSUSDT",
+        "display_name": "USDS/USDT",
+        "coingecko_id": "usds",
+        "tradingview_symbol": "BINANCE:USDSUSDT"
+    },
+    {
+        "symbol": "LINKUSDT",
+        "display_name": "LINK/USDT",
+        "coingecko_id": "chainlink",
+        "tradingview_symbol": "BINANCE:LINKUSDT"
+    },
+    {
+        "symbol": "LEOUSDT",
+        "display_name": "LEO/USDT",
+        "coingecko_id": "leo-token",
+        "tradingview_symbol": "BINANCE:LEOUSDT"
+    },
+    {
+        "symbol": "ADAUSDT",
+        "display_name": "ADA/USDT",
+        "coingecko_id": "cardano",
+        "tradingview_symbol": "BINANCE:ADAUSDT"
+    },
+    {
+        "symbol": "WBTUSDT",
+        "display_name": "WBT/USDT",
+        "coingecko_id": "whitebit",
+        "tradingview_symbol": "BINANCE:WBTUSDT"
+    },
+    {
+        "symbol": "XMRUSDT",
+        "display_name": "XMR/USDT",
+        "coingecko_id": "monero",
+        "tradingview_symbol": "BINANCE:XMRUSDT"
+    },
+    {
+        "symbol": "XLMUSDT",
+        "display_name": "XLM/USDT",
+        "coingecko_id": "stellar",
+        "tradingview_symbol": "BINANCE:XLMUSDT"
+    },
+    {
+        "symbol": "BCHUSDT",
+        "display_name": "BCH/USDT",
+        "coingecko_id": "bitcoin-cash",
+        "tradingview_symbol": "BINANCE:BCHUSDT"
+    },
+    {
+        "symbol": "CCUSDT",
+        "display_name": "CC/USDT",
+        "coingecko_id": "canton-network",
+        "tradingview_symbol": "BINANCE:CCUSDT"
+    },
+    {
+        "symbol": "LTCUSDT",
+        "display_name": "LTC/USDT",
+        "coingecko_id": "litecoin",
+        "tradingview_symbol": "BINANCE:LTCUSDT"
+    },
+    {
+        "symbol": "USD1USDT",
+        "display_name": "USD1/USDT",
+        "coingecko_id": "usd1-wlfi",
+        "tradingview_symbol": "BINANCE:USD1USDT"
+    },
+    {
+        "symbol": "GRAMUSDT",
+        "display_name": "GRAM/USDT",
+        "coingecko_id": "the-open-network",
+        "tradingview_symbol": "BINANCE:GRAMUSDT"
+    },
+    {
+        "symbol": "HBARUSDT",
+        "display_name": "HBAR/USDT",
+        "coingecko_id": "hedera-hashgraph",
+        "tradingview_symbol": "BINANCE:HBARUSDT"
+    },
+    {
+        "symbol": "USDGUSDT",
+        "display_name": "USDG/USDT",
+        "coingecko_id": "global-dollar",
+        "tradingview_symbol": "BINANCE:USDGUSDT"
+    },
+    {
+        "symbol": "SUIUSDT",
+        "display_name": "SUI/USDT",
+        "coingecko_id": "sui",
+        "tradingview_symbol": "BINANCE:SUIUSDT"
+    },
+    {
+        "symbol": "AVAXUSDT",
+        "display_name": "AVAX/USDT",
+        "coingecko_id": "avalanche-2",
+        "tradingview_symbol": "BINANCE:AVAXUSDT"
+    },
+    {
+        "symbol": "SHIBUSDT",
+        "display_name": "SHIB/USDT",
+        "coingecko_id": "shiba-inu",
+        "tradingview_symbol": "BINANCE:SHIBUSDT"
+    },
+    {
+        "symbol": "USYCUSDT",
+        "display_name": "USYC/USDT",
+        "coingecko_id": "hashnote-usyc",
+        "tradingview_symbol": "BINANCE:USYCUSDT"
+    },
+    {
+        "symbol": "PYUSDUSDT",
+        "display_name": "PYUSD/USDT",
+        "coingecko_id": "paypal-usd",
+        "tradingview_symbol": "BINANCE:PYUSDUSDT"
+    },
+    {
+        "symbol": "XAUTUSDT",
+        "display_name": "XAUT/USDT",
+        "coingecko_id": "tether-gold",
+        "tradingview_symbol": "BINANCE:XAUTUSDT"
+    },
+    {
+        "symbol": "CROUSDT",
+        "display_name": "CRO/USDT",
+        "coingecko_id": "crypto-com-chain",
+        "tradingview_symbol": "BINANCE:CROUSDT"
+    },
+    {
+        "symbol": "UNIUSDT",
+        "display_name": "UNI/USDT",
+        "coingecko_id": "uniswap",
+        "tradingview_symbol": "BINANCE:UNIUSDT"
+    },
+    {
+        "symbol": "BUIDLUSDT",
+        "display_name": "BUIDL/USDT",
+        "coingecko_id": "blackrock-usd-institutional-digital-liquidity-fund",
+        "tradingview_symbol": "BINANCE:BUIDLUSDT"
+    },
+    {
+        "symbol": "MUSDT",
+        "display_name": "M/USDT",
+        "coingecko_id": "memecore",
+        "tradingview_symbol": "BINANCE:MUSDT"
+    },
+    {
+        "symbol": "NEARUSDT",
+        "display_name": "NEAR/USDT",
+        "coingecko_id": "near",
+        "tradingview_symbol": "BINANCE:NEARUSDT"
+    },
+    {
+        "symbol": "OKBUSDT",
+        "display_name": "OKB/USDT",
+        "coingecko_id": "okb",
+        "tradingview_symbol": "BINANCE:OKBUSDT"
+    },
+    {
+        "symbol": "TAOUSDT",
+        "display_name": "TAO/USDT",
+        "coingecko_id": "bittensor",
+        "tradingview_symbol": "BINANCE:TAOUSDT"
+    },
+    {
+        "symbol": "USDYUSDT",
+        "display_name": "USDY/USDT",
+        "coingecko_id": "ondo-us-dollar-yield",
+        "tradingview_symbol": "BINANCE:USDYUSDT"
+    },
+    {
+        "symbol": "RLUSDUSDT",
+        "display_name": "RLUSD/USDT",
+        "coingecko_id": "ripple-usd",
+        "tradingview_symbol": "BINANCE:RLUSDUSDT"
+    },
+    {
+        "symbol": "PAXGUSDT",
+        "display_name": "PAXG/USDT",
+        "coingecko_id": "pax-gold",
+        "tradingview_symbol": "BINANCE:PAXGUSDT"
+    },
+    {
+        "symbol": "PUMPUSDT",
+        "display_name": "PUMP/USDT",
+        "coingecko_id": "pump-fun",
+        "tradingview_symbol": "BINANCE:PUMPUSDT"
+    },
+    {
+        "symbol": "AAVEUSDT",
+        "display_name": "AAVE/USDT",
+        "coingecko_id": "aave",
+        "tradingview_symbol": "BINANCE:AAVEUSDT"
+    },
+    {
+        "symbol": "WLFIUSDT",
+        "display_name": "WLFI/USDT",
+        "coingecko_id": "world-liberty-financial",
+        "tradingview_symbol": "BINANCE:WLFIUSDT"
+    },
+    {
+        "symbol": "ONDOUSDT",
+        "display_name": "ONDO/USDT",
+        "coingecko_id": "ondo-finance",
+        "tradingview_symbol": "BINANCE:ONDOUSDT"
+    },
+    {
+        "symbol": "ASTERUSDT",
+        "display_name": "ASTER/USDT",
+        "coingecko_id": "aster-2",
+        "tradingview_symbol": "BINANCE:ASTERUSDT"
+    },
+    {
+        "symbol": "PEPEUSDT",
+        "display_name": "PEPE/USDT",
+        "coingecko_id": "pepe",
+        "tradingview_symbol": "BINANCE:PEPEUSDT"
+    },
+    {
+        "symbol": "HTXUSDT",
+        "display_name": "HTX/USDT",
+        "coingecko_id": "htx-dao",
+        "tradingview_symbol": "BINANCE:HTXUSDT"
+    },
+    {
+        "symbol": "MNTUSDT",
+        "display_name": "MNT/USDT",
+        "coingecko_id": "mantle",
+        "tradingview_symbol": "BINANCE:MNTUSDT"
+    },
+    {
+        "symbol": "DOTUSDT",
+        "display_name": "DOT/USDT",
+        "coingecko_id": "polkadot",
+        "tradingview_symbol": "BINANCE:DOTUSDT"
+    },
+    {
+        "symbol": "ENAUSDT",
+        "display_name": "ENA/USDT",
+        "coingecko_id": "ethena",
+        "tradingview_symbol": "BINANCE:ENAUSDT"
+    },
+    {
+        "symbol": "SKYUSDT",
+        "display_name": "SKY/USDT",
+        "coingecko_id": "sky",
+        "tradingview_symbol": "BINANCE:SKYUSDT"
+    },
+    {
+        "symbol": "USDDUSDT",
+        "display_name": "USDD/USDT",
+        "coingecko_id": "usdd",
+        "tradingview_symbol": "BINANCE:USDDUSDT"
+    },
+    {
+        "symbol": "MORPHOUSDT",
+        "display_name": "MORPHO/USDT",
+        "coingecko_id": "morpho",
+        "tradingview_symbol": "BINANCE:MORPHOUSDT"
+    },
+    {
+        "symbol": "WLDUSDT",
+        "display_name": "WLD/USDT",
+        "coingecko_id": "worldcoin-wld",
+        "tradingview_symbol": "BINANCE:WLDUSDT"
+    },
+    {
+        "symbol": "USDFUSDT",
+        "display_name": "USDF/USDT",
+        "coingecko_id": "falcon-finance",
+        "tradingview_symbol": "BINANCE:USDFUSDT"
+    },
+    {
+        "symbol": "BFUSDUSDT",
+        "display_name": "BFUSD/USDT",
+        "coingecko_id": "bfusd",
+        "tradingview_symbol": "BINANCE:BFUSDUSDT"
+    },
+    {
+        "symbol": "BGBUSDT",
+        "display_name": "BGB/USDT",
+        "coingecko_id": "bitget-token",
+        "tradingview_symbol": "BINANCE:BGBUSDT"
+    },
+    {
+        "symbol": "ICPUSDT",
+        "display_name": "ICP/USDT",
+        "coingecko_id": "internet-computer",
+        "tradingview_symbol": "BINANCE:ICPUSDT"
+    },
+    {
+        "symbol": "UUSDT",
+        "display_name": "U/USDT",
+        "coingecko_id": "united-stables",
+        "tradingview_symbol": "BINANCE:UUSDT"
+    },
+    {
+        "symbol": "ETCUSDT",
+        "display_name": "ETC/USDT",
+        "coingecko_id": "ethereum-classic",
+        "tradingview_symbol": "BINANCE:ETCUSDT"
+    },
+    {
+        "symbol": "EURSAFOUSDT",
+        "display_name": "EURSAFO/USDT",
+        "coingecko_id": "spiko-amundi-overnight-swap-fund-eur",
+        "tradingview_symbol": "BINANCE:EURSAFOUSDT"
+    },
+    {
+        "symbol": "BTWUSDT",
+        "display_name": "BTW/USDT",
+        "coingecko_id": "bitway",
+        "tradingview_symbol": "BINANCE:BTWUSDT"
+    },
+    {
+        "symbol": "USDGOUSDT",
+        "display_name": "USDGO/USDT",
+        "coingecko_id": "usdgo",
+        "tradingview_symbol": "BINANCE:USDGOUSDT"
+    },
+    {
+        "symbol": "POLUSDT",
+        "display_name": "POL/USDT",
+        "coingecko_id": "polygon-ecosystem-token",
+        "tradingview_symbol": "BINANCE:POLUSDT"
+    },
+    {
+        "symbol": "KCSUSDT",
+        "display_name": "KCS/USDT",
+        "coingecko_id": "kucoin-shares",
+        "tradingview_symbol": "BINANCE:KCSUSDT"
+    },
+    {
+        "symbol": "PIUSDT",
+        "display_name": "PI/USDT",
+        "coingecko_id": "pi-network",
+        "tradingview_symbol": "BINANCE:PIUSDT"
+    },
+    {
+        "symbol": "BCAPUSDT",
+        "display_name": "BCAP/USDT",
+        "coingecko_id": "blockchain-capital",
+        "tradingview_symbol": "BINANCE:BCAPUSDT"
+    },
+    {
+        "symbol": "EUTBLUSDT",
+        "display_name": "EUTBL/USDT",
+        "coingecko_id": "eutbl",
+        "tradingview_symbol": "BINANCE:EUTBLUSDT"
+    },
+    {
+        "symbol": "QNTUSDT",
+        "display_name": "QNT/USDT",
+        "coingecko_id": "quant-network",
+        "tradingview_symbol": "BINANCE:QNTUSDT"
+    },
+    {
+        "symbol": "JTRSYUSDT",
+        "display_name": "JTRSY/USDT",
+        "coingecko_id": "janus-henderson-anemoy-treasury-fund",
+        "tradingview_symbol": "BINANCE:JTRSYUSDT"
+    },
+    {
+        "symbol": "JSTUSDT",
+        "display_name": "JST/USDT",
+        "coingecko_id": "just",
+        "tradingview_symbol": "BINANCE:JSTUSDT"
+    },
+    {
+        "symbol": "ALGOUSDT",
+        "display_name": "ALGO/USDT",
+        "coingecko_id": "algorand",
+        "tradingview_symbol": "BINANCE:ALGOUSDT"
+    },
+    {
+        "symbol": "ATOMUSDT",
+        "display_name": "ATOM/USDT",
+        "coingecko_id": "cosmos",
+        "tradingview_symbol": "BINANCE:ATOMUSDT"
+    },
+    {
+        "symbol": "GTUSDT",
+        "display_name": "GT/USDT",
+        "coingecko_id": "gatechain-token",
+        "tradingview_symbol": "BINANCE:GTUSDT"
+    },
+    {
+        "symbol": "NEXOUSDT",
+        "display_name": "NEXO/USDT",
+        "coingecko_id": "nexo",
+        "tradingview_symbol": "BINANCE:NEXOUSDT"
+    },
+    {
+        "symbol": "USTBUSDT",
+        "display_name": "USTB/USDT",
+        "coingecko_id": "superstate-short-duration-us-government-securities-fund-ustb",
+        "tradingview_symbol": "BINANCE:USTBUSDT"
+    },
+    {
+        "symbol": "KASUSDT",
+        "display_name": "KAS/USDT",
+        "coingecko_id": "kaspa",
+        "tradingview_symbol": "BINANCE:KASUSDT"
+    },
+    {
+        "symbol": "LITUSDT",
+        "display_name": "LIT/USDT",
+        "coingecko_id": "lighter",
+        "tradingview_symbol": "BINANCE:LITUSDT"
+    },
+    {
+        "symbol": "STABLEUSDT",
+        "display_name": "STABLE/USDT",
+        "coingecko_id": "stable-2",
+        "tradingview_symbol": "BINANCE:STABLEUSDT"
+    },
+    {
+        "symbol": "VVVUSDT",
+        "display_name": "VVV/USDT",
+        "coingecko_id": "venice-token",
+        "tradingview_symbol": "BINANCE:VVVUSDT"
+    },
+    {
+        "symbol": "RENDERUSDT",
+        "display_name": "RENDER/USDT",
+        "coingecko_id": "render-token",
+        "tradingview_symbol": "BINANCE:RENDERUSDT"
+    },
+    {
+        "symbol": "JAAAUSDT",
+        "display_name": "JAAA/USDT",
+        "coingecko_id": "janus-henderson-anemoy-aaa-clo-fund",
+        "tradingview_symbol": "BINANCE:JAAAUSDT"
+    },
+    {
+        "symbol": "GHOUSDT",
+        "display_name": "GHO/USDT",
+        "coingecko_id": "gho",
+        "tradingview_symbol": "BINANCE:GHOUSDT"
+    },
+    {
+        "symbol": "YLDSUSDT",
+        "display_name": "YLDS/USDT",
+        "coingecko_id": "ylds",
+        "tradingview_symbol": "BINANCE:YLDSUSDT"
+    },
+    {
+        "symbol": "JUPUSDT",
+        "display_name": "JUP/USDT",
+        "coingecko_id": "jupiter-exchange-solana",
+        "tradingview_symbol": "BINANCE:JUPUSDT"
+    },
+    {
+        "symbol": "ARBUSDT",
+        "display_name": "ARB/USDT",
+        "coingecko_id": "arbitrum",
+        "tradingview_symbol": "BINANCE:ARBUSDT"
+    },
+    {
+        "symbol": "BDXUSDT",
+        "display_name": "BDX/USDT",
+        "coingecko_id": "beldex",
+        "tradingview_symbol": "BINANCE:BDXUSDT"
+    },
+    {
+        "symbol": "FILUSDT",
+        "display_name": "FIL/USDT",
+        "coingecko_id": "filecoin",
+        "tradingview_symbol": "BINANCE:FILUSDT"
+    },
+    {
+        "symbol": "FLRUSDT",
+        "display_name": "FLR/USDT",
+        "coingecko_id": "flare-networks",
+        "tradingview_symbol": "BINANCE:FLRUSDT"
+    },
+    {
+        "symbol": "TRUMPUSDT",
+        "display_name": "TRUMP/USDT",
+        "coingecko_id": "official-trump",
+        "tradingview_symbol": "BINANCE:TRUMPUSDT"
+    },
+    {
+        "symbol": "ETHFIUSDT",
+        "display_name": "ETHFI/USDT",
+        "coingecko_id": "ether-fi",
+        "tradingview_symbol": "BINANCE:ETHFIUSDT"
+    },
+    {
+        "symbol": "XDCUSDT",
+        "display_name": "XDC/USDT",
+        "coingecko_id": "xdce-crowd-sale",
+        "tradingview_symbol": "BINANCE:XDCUSDT"
+    },
+    {
+        "symbol": "USD0USDT",
+        "display_name": "USD0/USDT",
+        "coingecko_id": "usual-usd",
+        "tradingview_symbol": "BINANCE:USD0USDT"
+    },
+    {
+        "symbol": "CAKEUSDT",
+        "display_name": "CAKE/USDT",
+        "coingecko_id": "pancakeswap-token",
+        "tradingview_symbol": "BINANCE:CAKEUSDT"
+    },
+    {
+        "symbol": "APTUSDT",
+        "display_name": "APT/USDT",
+        "coingecko_id": "aptos",
+        "tradingview_symbol": "BINANCE:APTUSDT"
+    },
+    {
+        "symbol": "PENGUUSDT",
+        "display_name": "PENGU/USDT",
+        "coingecko_id": "pudgy-penguins",
+        "tradingview_symbol": "BINANCE:PENGUUSDT"
+    },
+    {
+        "symbol": "DASHUSDT",
+        "display_name": "DASH/USDT",
+        "coingecko_id": "dash",
+        "tradingview_symbol": "BINANCE:DASHUSDT"
+    },
+    {
+        "symbol": "CRVUSDT",
+        "display_name": "CRV/USDT",
+        "coingecko_id": "curve-dao-token",
+        "tradingview_symbol": "BINANCE:CRVUSDT"
+    },
+    {
+        "symbol": "币安人生USDT",
+        "display_name": "币安人生/USDT",
+        "coingecko_id": "bianrensheng",
+        "tradingview_symbol": "BINANCE:币安人生USDT"
+    }
+]

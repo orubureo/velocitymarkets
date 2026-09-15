@@ -28,7 +28,14 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable([
+    'name', 'email', 'password', 'balance', 'referred_by', 'referral_bonus_paid',
+    'kyc_status', 'kyc_document_type', 'kyc_document_path', 'kyc_selfie_path',
+    'kyc_submitted_at', 'kyc_reviewed_at', 'kyc_rejection_reason',
+    'phone', 'country',
+    'bank_name', 'bank_account_name', 'bank_account_number', 'swift_code',
+    'btc_address', 'eth_address', 'ltc_address', 'usdt_address'
+])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements PasskeyUser
 {
@@ -45,6 +52,8 @@ class User extends Authenticatable implements PasskeyUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'kyc_submitted_at' => 'datetime',
+            'kyc_reviewed_at' => 'datetime',
         ];
     }
 
@@ -56,7 +65,27 @@ class User extends Authenticatable implements PasskeyUser
         $initials = Str::initials($this->name, true);
 
         return Str::length($initials) > 1
-            ? Str::substr($initials, 0, 1).Str::substr($initials, -1)
+            ? Str::substr($initials, 0, 1) . Str::substr($initials, -1)
             : $initials;
+    }
+
+    public function wallet(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
+    public function referrer(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'referred_by');
+    }
+
+    public function referrals(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(User::class, 'referred_by');
+    }
+
+    public function supportTickets(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(SupportTicket::class);
     }
 }

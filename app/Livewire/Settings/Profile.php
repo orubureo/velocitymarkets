@@ -16,16 +16,20 @@ class Profile extends Component
     use ProfileValidationRules;
 
     public string $name = '';
-
     public string $email = '';
+    public string $phone = '';
+    public string $country = '';
 
     /**
      * Mount the component.
      */
     public function mount(): void
     {
-        $this->name = Auth::user()->name;
-        $this->email = Auth::user()->email;
+        $user = Auth::user();
+        $this->name = $user->name;
+        $this->email = $user->email;
+        $this->phone = $user->phone ?? '';
+        $this->country = $user->country ?? '';
     }
 
     /**
