@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Trade extends Model
 {
@@ -29,12 +30,18 @@ class Trade extends Model
         'settled_at' => 'datetime',
     ];
 
-    public function user()
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function wallet()
+    /**
+     * @return BelongsTo<Wallet, $this>
+     */
+    public function wallet(): BelongsTo
     {
         return $this->belongsTo(Wallet::class);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -14,7 +15,7 @@ class NotificationsBell extends Component
         Auth::user()->unreadNotifications->markAsRead();
     }
 
-    public function render()
+    public function render(): View
     {
         $user = Auth::user();
 

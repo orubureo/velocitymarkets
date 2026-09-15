@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\SupportTicket;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -37,7 +38,7 @@ class Support extends Component
         session()->flash('status', 'Your support ticket has been submitted.');
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.support', [
             'tickets' => SupportTicket::where('user_id', Auth::id())->latest()->get(),

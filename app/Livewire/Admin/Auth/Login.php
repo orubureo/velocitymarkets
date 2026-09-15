@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Auth;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -15,7 +16,7 @@ class Login extends Component
 
     public string $password = '';
 
-    public function login()
+    public function login(): void
     {
         $this->validate([
             'email' => ['required', 'email'],
@@ -33,7 +34,7 @@ class Login extends Component
         $this->redirect(route('admin.dashboard'), navigate: true);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.admin.auth.login');
     }

@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Trader;
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -31,7 +32,7 @@ class Traders extends Component
 
     public string $maxCopyAmount = '';
 
-    public function addTrader()
+    public function addTrader(): void
     {
         $this->validate([
             'name' => ['required', 'string', 'max:100'],
@@ -68,13 +69,13 @@ class Traders extends Component
         $this->minCopyAmount = '50';
     }
 
-    public function toggleActive(int $traderId)
+    public function toggleActive(int $traderId): void
     {
         $trader = Trader::findOrFail($traderId);
         $trader->update(['is_active' => ! $trader->is_active]);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.admin.traders', [
             'traders' => Trader::orderBy('sort_order')->get(),

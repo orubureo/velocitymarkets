@@ -51,13 +51,13 @@ class DemoDataSeeder extends Seeder
         $admin = Admin::first();
         $users = $this->seedUsers();
 
-        $this->command?->info(sprintf('Seeded %d demo users.', count($users)));
+        $this->command->info(sprintf('Seeded %d demo users.', count($users)));
 
         $this->seedTransactions($users, $admin);
         $this->seedTrades($users);
         $this->seedSupportTickets($users);
 
-        $this->command?->info('Demo data seeded across the last '.self::WINDOW_DAYS.' days.');
+        $this->command->info('Demo data seeded across the last '.self::WINDOW_DAYS.' days.');
     }
 
     /**
@@ -84,7 +84,7 @@ class DemoDataSeeder extends Seeder
             ->delete();
         User::whereIn('id', $userIds)->delete();
 
-        $this->command?->warn(sprintf('Cleared %d users from a previous demo run.', $userIds->count()));
+        $this->command->warn(sprintf('Cleared %d users from a previous demo run.', $userIds->count()));
     }
 
     /**
@@ -238,7 +238,7 @@ class DemoDataSeeder extends Seeder
             $record['user']->forceFill(['balance' => max(0, round($balance, 2))])->save();
         }
 
-        $this->command?->info("Seeded {$rows} wallet transactions.");
+        $this->command->info("Seeded {$rows} wallet transactions.");
     }
 
     private function createTransaction(
@@ -318,7 +318,7 @@ class DemoDataSeeder extends Seeder
             }
         }
 
-        $this->command?->info("Seeded {$count} trades.");
+        $this->command->info("Seeded {$count} trades.");
     }
 
     /**
@@ -355,7 +355,7 @@ class DemoDataSeeder extends Seeder
             $count++;
         }
 
-        $this->command?->info("Seeded {$count} support tickets.");
+        $this->command->info("Seeded {$count} support tickets.");
     }
 
     private function momentOn(int $daysAgo): Carbon

@@ -8,8 +8,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class InvestmentPlan extends Model
 {
     protected $fillable = [
-        'name', 'description', 'min_amount', 'max_amount',
-        'roi_percent', 'duration_days', 'sort_order', 'is_active',
+        'name',
+        'description',
+        'min_amount',
+        'max_amount',
+        'roi_percent',
+        'duration_days',
+        'sort_order',
+        'is_active',
     ];
 
     protected $casts = [
@@ -19,6 +25,9 @@ class InvestmentPlan extends Model
         'is_active' => 'boolean',
     ];
 
+    /**
+     * @return HasMany<UserInvestment, $this>
+     */
     public function investments(): HasMany
     {
         return $this->hasMany(UserInvestment::class);

@@ -9,8 +9,13 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 class UserInvestment extends Model
 {
     protected $fillable = [
-        'user_id', 'wallet_id', 'investment_plan_id', 'amount',
-        'status', 'starts_at', 'ends_at',
+        'user_id',
+        'wallet_id',
+        'investment_plan_id',
+        'amount',
+        'status',
+        'starts_at',
+        'ends_at',
     ];
 
     protected $casts = [
@@ -19,21 +24,33 @@ class UserInvestment extends Model
         'ends_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsTo<Wallet, $this>
+     */
     public function wallet(): BelongsTo
     {
         return $this->belongsTo(Wallet::class);
     }
 
+    /**
+     * @return BelongsTo<InvestmentPlan, $this>
+     */
     public function plan(): BelongsTo
     {
         return $this->belongsTo(InvestmentPlan::class, 'investment_plan_id');
     }
 
+    /**
+     * @return MorphMany<WalletTransaction, $this>
+     */
     public function transactions(): MorphMany
     {
         return $this->morphMany(WalletTransaction::class, 'reference');

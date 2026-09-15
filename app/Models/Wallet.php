@@ -14,11 +14,17 @@ class Wallet extends Model
         'balance' => 'decimal:2',
     ];
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return HasMany<WalletTransaction, $this>
+     */
     public function transactions(): HasMany
     {
         return $this->hasMany(WalletTransaction::class);
@@ -32,7 +38,7 @@ class Wallet extends Model
 
     public function totalWithdrawals(): float
     {
-        return (float) abs($this->transactions()
+        return abs((float) $this->transactions()
             ->where('type', 'withdrawal')->where('status', 'approved')->sum('amount'));
     }
 

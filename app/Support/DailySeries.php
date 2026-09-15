@@ -24,6 +24,8 @@ class DailySeries
     /**
      * Smallest "nice" ceiling >= max($max, $floor), stepping through $steps * 10^n.
      * Clamping to $floor before log10() avoids log10(0) (-INF) when every value is zero.
+     *
+     * @param  array<int, int|float>  $steps
      */
     public static function niceCeiling(float $max, float $floor, array $steps): float
     {

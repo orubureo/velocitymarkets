@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\CopyTradeSubscription;
 use App\Models\WalletTransaction;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -21,7 +22,7 @@ class CopySubscriptions extends Component
 
     public string $creditType = 'profit';
 
-    public function openCreditModal(int $subscriptionId, string $type)
+    public function openCreditModal(int $subscriptionId, string $type): void
     {
         $this->creditingSubscriptionId = $subscriptionId;
         $this->creditType = $type;
@@ -29,14 +30,14 @@ class CopySubscriptions extends Component
         $this->showCreditModal = true;
     }
 
-    public function closeCreditModal()
+    public function closeCreditModal(): void
     {
         $this->showCreditModal = false;
         $this->reset(['creditingSubscriptionId', 'creditAmount']);
         $this->creditType = 'profit';
     }
 
-    public function creditPnl()
+    public function creditPnl(): void
     {
         $this->validate([
             'creditAmount' => ['required', 'numeric', 'min:0.01'],
@@ -44,8 +45,9 @@ class CopySubscriptions extends Component
 
         $subscription = CopyTradeSubscription::with('trader')->findOrFail($this->creditingSubscriptionId);
 
+        $amount = (float) $this->creditAmount;
         $type = $this->creditType === 'profit' ? 'copy_trade_profit' : 'copy_trade_loss';
-        $signedAmount = $this->creditType === 'profit' ? $this->creditAmount : -$this->creditAmount;
+        $signedAmount = $this->creditType === 'profit' ? $amount : -$amount;
 
         WalletTransaction::create([
             'wallet_id' => $subscription->wallet_id,
@@ -64,7 +66,7 @@ class CopySubscriptions extends Component
         $this->closeCreditModal();
     }
 
-    public function stopSubscription(int $subscriptionId)
+    public function stopSubscription(int $subscriptionId): void
     {
         CopyTradeSubscription::findOrFail($subscriptionId)->update([
             'status' => 'stopped',
@@ -72,7 +74,7 @@ class CopySubscriptions extends Component
         ]);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.admin.copy-subscriptions', [
             'subscriptions' => CopyTradeSubscription::where('status', 'active')->with(['user', 'trader'])->latest()->get(),

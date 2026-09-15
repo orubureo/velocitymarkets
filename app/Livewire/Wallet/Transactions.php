@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Wallet;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -14,14 +15,14 @@ class Transactions extends Component
 
     public string $filter = 'all';
 
-    public function updatedFilter()
+    public function updatedFilter(): void
     {
         $this->resetPage();
     }
 
-    public function render()
+    public function render(): View
     {
-        $wallet = Auth::user()->wallet;
+        $wallet = Auth::guard('web')->user()->wallet;
 
         $query = $wallet->transactions()->with('approver')->latest();
 

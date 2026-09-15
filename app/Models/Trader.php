@@ -8,8 +8,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Trader extends Model
 {
     protected $fillable = [
-        'name', 'avatar_initials', 'tagline', 'bio', 'tier', 'risk_level', 'win_rate', 'roi_30d',
-        'base_copiers', 'min_copy_amount', 'max_copy_amount', 'sort_order', 'is_active',
+        'name',
+        'avatar_initials',
+        'tagline',
+        'bio',
+        'tier',
+        'risk_level',
+        'win_rate',
+        'roi_30d',
+        'base_copiers',
+        'min_copy_amount',
+        'max_copy_amount',
+        'sort_order',
+        'is_active',
     ];
 
     protected $casts = [
@@ -20,6 +31,9 @@ class Trader extends Model
         'is_active' => 'boolean',
     ];
 
+    /**
+     * @return HasMany<CopyTradeSubscription, $this>
+     */
     public function subscriptions(): HasMany
     {
         return $this->hasMany(CopyTradeSubscription::class);

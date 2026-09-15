@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\User;
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -24,17 +25,17 @@ class Kyc extends Component
 
     public string $rejectionReason = '';
 
-    public function updatedSearch()
+    public function updatedSearch(): void
     {
         $this->resetPage();
     }
 
-    public function updatedStatusFilter()
+    public function updatedStatusFilter(): void
     {
         $this->resetPage();
     }
 
-    public function approve(int $userId)
+    public function approve(int $userId): void
     {
         $user = User::findOrFail($userId);
 
@@ -45,20 +46,20 @@ class Kyc extends Component
         ]);
     }
 
-    public function openRejectModal(int $userId)
+    public function openRejectModal(int $userId): void
     {
         $this->rejectingUserId = $userId;
         $this->rejectionReason = '';
         $this->showRejectModal = true;
     }
 
-    public function closeRejectModal()
+    public function closeRejectModal(): void
     {
         $this->showRejectModal = false;
         $this->reset(['rejectingUserId', 'rejectionReason']);
     }
 
-    public function reject()
+    public function reject(): void
     {
         $this->validate([
             'rejectionReason' => ['required', 'string', 'max:255'],
@@ -75,7 +76,7 @@ class Kyc extends Component
         $this->closeRejectModal();
     }
 
-    public function render()
+    public function render(): View
     {
         $query = User::query()
             ->where('kyc_status', '!=', 'none')

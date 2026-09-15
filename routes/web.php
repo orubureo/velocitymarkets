@@ -84,12 +84,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('settings', Settings::class)->name('settings');
         Route::get('notifications', Notifications::class)->name('notifications');
         Route::get('deposits/{transaction}/proof', function (WalletTransaction $transaction) {
-            abort_unless($transaction->proof_path, 404);
+            abort_unless(filled($transaction->proof_path), 404);
 
             return Storage::disk('local')->download($transaction->proof_path);
         })->name('deposits.proof');
         Route::get('kyc/{user}/document', function (User $user) {
-            abort_unless($user->kyc_document_path, 404);
+            abort_unless(filled($user->kyc_document_path), 404);
 
             return Storage::disk('local')->download($user->kyc_document_path);
         })->name('kyc.document');

@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\WalletTransaction;
 use App\Notifications\WalletTransactionUpdated;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -13,7 +14,7 @@ use Livewire\Component;
 #[Layout('layouts.admin')]
 class Deposits extends Component
 {
-    public function approve(int $transactionId)
+    public function approve(int $transactionId): void
     {
         $transaction = WalletTransaction::findOrFail($transactionId);
 
@@ -23,7 +24,7 @@ class Deposits extends Component
             'approved_at' => now(),
         ]);
 
-        $transaction->wallet->increment('balance', $transaction->amount);
+        $transaction->wallet->increment('balance', (float) $transaction->amount);
 
         $this->creditReferralBonus($transaction);
 
@@ -38,7 +39,7 @@ class Deposits extends Component
             return;
         }
 
-        $bonusAmount = round($transaction->amount * 0.05, 2); // 5% — placeholder, adjust to your actual rate
+        $bonusAmount = round((float) $transaction->amount * 0.05, 2); // 5% — placeholder, adjust to your actual rate
         $referrerWallet = $user->referrer->wallet;
 
         WalletTransaction::create([
@@ -53,7 +54,7 @@ class Deposits extends Component
         $user->update(['referral_bonus_paid' => true]);
     }
 
-    public function reject(int $transactionId)
+    public function reject(int $transactionId): void
     {
         $transaction = WalletTransaction::findOrFail($transactionId);
 
@@ -66,7 +67,7 @@ class Deposits extends Component
         $transaction->wallet->user->notify(new WalletTransactionUpdated($transaction));
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.admin.deposits', [
             'deposits' => WalletTransaction::where('type', 'deposit')

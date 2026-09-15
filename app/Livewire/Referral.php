@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -14,9 +15,9 @@ class Referral extends Component
         $this->dispatch('copy-referral-link');
     }
 
-    public function render()
+    public function render(): View
     {
-        $user = Auth::user();
+        $user = Auth::guard('web')->user();
         $referrer = $user->referrer;
         $referrals = $user->referrals()->with('wallet')->latest()->get();
 
@@ -27,7 +28,7 @@ class Referral extends Component
         return view('livewire.referral', [
             'referralCode' => $user->referral_code ?? 'N/A',
             'referralLink' => url('/register?ref='.($user->referral_code ?? '')),
-            'sponsor' => $referrer?->name ?? '—',
+            'sponsor' => $referrer->name ?? '—',
             'totalReferrals' => $referrals->count(),
             'referralEarnings' => $referralEarnings,
             'referrals' => $referrals,

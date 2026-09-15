@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -27,7 +28,7 @@ class Notifications extends Component
             ->update(['read_at' => now()]);
     }
 
-    public function render()
+    public function render(): View
     {
         $admin = Auth::guard('admin')->user();
 

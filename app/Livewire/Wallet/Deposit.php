@@ -5,9 +5,11 @@ namespace App\Livewire\Wallet;
 use App\Models\CryptoWallet;
 use App\Models\WalletTransaction;
 use App\Services\QrCodeService;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
 #[Title('Deposit Funds')]
@@ -27,9 +29,9 @@ class Deposit extends Component
 
     public string $amount = '';
 
-    public $proofFile = null;
+    public ?TemporaryUploadedFile $proofFile = null;
 
-    public function selectCurrency(string $currency)
+    public function selectCurrency(string $currency): void
     {
         if ($currency === 'USDT') {
             $this->currency = 'USDT';
@@ -55,7 +57,7 @@ class Deposit extends Component
         $this->step = 2;
     }
 
-    public function selectNetwork(string $network)
+    public function selectNetwork(string $network): void
     {
         $wallet = CryptoWallet::where('currency', 'USDT')
             ->where('network', $network)
@@ -74,7 +76,7 @@ class Deposit extends Component
         $this->step = 2;
     }
 
-    public function backToMethod()
+    public function backToMethod(): void
     {
         $this->step = 1;
         $this->awaitingNetwork = false;
@@ -83,7 +85,7 @@ class Deposit extends Component
         $this->cryptoWalletId = null;
     }
 
-    public function proceedToPayment()
+    public function proceedToPayment(): void
     {
         $this->validate([
             'amount' => ['required', 'numeric', 'min:10'],
@@ -92,7 +94,7 @@ class Deposit extends Component
         $this->step = 3;
     }
 
-    public function backToAmount()
+    public function backToAmount(): void
     {
         $this->step = 2;
     }
@@ -108,7 +110,7 @@ class Deposit extends Component
         };
     }
 
-    public function confirmSent()
+    public function confirmSent(): void
     {
         $this->validate([
             'amount' => ['required', 'numeric', 'min:10'],
@@ -122,7 +124,7 @@ class Deposit extends Component
             : null;
 
         WalletTransaction::create([
-            'wallet_id' => Auth::user()->wallet->id,
+            'wallet_id' => Auth::guard('web')->user()->wallet->id,
             'type' => 'deposit',
             'amount' => $this->amount,
             'currency' => $wallet->currency,
@@ -138,7 +140,7 @@ class Deposit extends Component
         $this->reset(['step', 'awaitingNetwork', 'currency', 'network', 'cryptoWalletId', 'amount', 'proofFile']);
     }
 
-    public function render(QrCodeService $qr)
+    public function render(QrCodeService $qr): View
     {
         $activeWallets = CryptoWallet::where('is_active', true)->get();
 

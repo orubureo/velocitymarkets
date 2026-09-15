@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -12,7 +13,7 @@ class NotificationsBell extends Component
         Auth::guard('admin')->user()->unreadNotifications->markAsRead();
     }
 
-    public function render()
+    public function render(): View
     {
         $admin = Auth::guard('admin')->user();
 

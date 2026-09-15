@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use SimpleXMLElement;
 
 class NewsService
 {
@@ -38,6 +39,8 @@ class NewsService
     /**
      * Parse the raw RSS XML body into a flat array of headline data.
      * Defensive against malformed/empty XML — returns [] rather than throwing.
+     *
+     * @return array<int, array{title: string, link: string, excerpt: string, image: ?string, published_at: ?Carbon, source: string}>
      */
     protected function parseFeed(string $body): array
     {
@@ -87,7 +90,7 @@ class NewsService
      * falling back to <media:content>, then to an <img> embedded in the
      * description HTML. Returns null (never a fabricated URL) if none exist.
      */
-    protected function imageFrom($item, string $description): ?string
+    protected function imageFrom(SimpleXMLElement $item, string $description): ?string
     {
         $url = (string) ($item->enclosure['url'] ?? '');
 

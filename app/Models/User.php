@@ -32,12 +32,29 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Carbon|null $updated_at
  */
 #[Fillable([
-    'name', 'email', 'password', 'balance', 'referred_by', 'referral_bonus_paid',
-    'kyc_status', 'kyc_document_type', 'kyc_document_path', 'kyc_selfie_path',
-    'kyc_submitted_at', 'kyc_reviewed_at', 'kyc_rejection_reason',
-    'phone', 'country',
-    'bank_name', 'bank_account_name', 'bank_account_number', 'swift_code',
-    'btc_address', 'eth_address', 'ltc_address', 'usdt_address',
+    'name',
+    'email',
+    'password',
+    'balance',
+    'referred_by',
+    'referral_bonus_paid',
+    'kyc_status',
+    'kyc_document_type',
+    'kyc_document_path',
+    'kyc_selfie_path',
+    'kyc_submitted_at',
+    'kyc_reviewed_at',
+    'kyc_rejection_reason',
+    'phone',
+    'country',
+    'bank_name',
+    'bank_account_name',
+    'bank_account_number',
+    'swift_code',
+    'btc_address',
+    'eth_address',
+    'ltc_address',
+    'usdt_address',
 ])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements PasskeyUser
@@ -72,21 +89,33 @@ class User extends Authenticatable implements PasskeyUser
             : $initials;
     }
 
+    /**
+     * @return HasOne<Wallet, $this>
+     */
     public function wallet(): HasOne
     {
         return $this->hasOne(Wallet::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function referrer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'referred_by');
     }
 
+    /**
+     * @return HasMany<User, $this>
+     */
     public function referrals(): HasMany
     {
         return $this->hasMany(User::class, 'referred_by');
     }
 
+    /**
+     * @return HasMany<SupportTicket, $this>
+     */
     public function supportTickets(): HasMany
     {
         return $this->hasMany(SupportTicket::class);

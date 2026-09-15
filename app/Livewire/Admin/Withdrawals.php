@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\WalletTransaction;
 use App\Notifications\WalletTransactionUpdated;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -13,14 +14,15 @@ use Livewire\Component;
 #[Layout('layouts.admin')]
 class Withdrawals extends Component
 {
-    public function approve(int $transactionId)
+    public function approve(int $transactionId): void
     {
         $transaction = WalletTransaction::findOrFail($transactionId);
         $wallet = $transaction->wallet;
+        $amount = (float) $transaction->amount;
 
         // Re-check balance at approval time — guards against the case where
         // multiple pending withdrawals together exceed what's actually available now.
-        if ($wallet->balance < abs($transaction->amount)) {
+        if ((float) $wallet->balance < abs($amount)) {
             session()->flash('error', 'Cannot approve — insufficient wallet balance.');
 
             return;
@@ -32,12 +34,12 @@ class Withdrawals extends Component
             'approved_at' => now(),
         ]);
 
-        $wallet->increment('balance', $transaction->amount); // negative amount, so this subtracts
+        $wallet->increment('balance', $amount); // negative amount, so this subtracts
 
         $wallet->user->notify(new WalletTransactionUpdated($transaction));
     }
 
-    public function reject(int $transactionId)
+    public function reject(int $transactionId): void
     {
         $transaction = WalletTransaction::findOrFail($transactionId);
 
@@ -50,7 +52,7 @@ class Withdrawals extends Component
         $transaction->wallet->user->notify(new WalletTransactionUpdated($transaction));
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.admin.withdrawals', [
             'withdrawals' => WalletTransaction::where('type', 'withdrawal')

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Marketing;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -24,7 +25,7 @@ class Contact extends Component
 
     public bool $sent = false;
 
-    public function submit()
+    public function submit(): void
     {
         $this->validate([
             'name' => ['required', 'string', 'max:100'],
@@ -44,7 +45,7 @@ class Contact extends Component
         $this->reset(['name', 'email', 'subject', 'message']);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.marketing.contact');
     }

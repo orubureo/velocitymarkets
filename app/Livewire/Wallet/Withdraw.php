@@ -3,6 +3,7 @@
 namespace App\Livewire\Wallet;
 
 use App\Models\WalletTransaction;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -70,14 +71,14 @@ class Withdraw extends Component
 
     public function submit(): void
     {
-        $wallet = Auth::user()->wallet;
+        $wallet = Auth::guard('web')->user()->wallet;
 
         $this->validateAmountAndDestination();
 
         WalletTransaction::create([
             'wallet_id' => $wallet->id,
             'type' => 'withdrawal',
-            'amount' => -$this->amount, // stored negative — signed amount convention
+            'amount' => -(float) $this->amount, // stored negative — signed amount convention
             'currency' => $this->method === 'crypto' ? $this->currency : null,
             'status' => 'pending',
             'note' => "Withdrawal via {$this->methodLabel()} to {$this->destination}",
@@ -109,7 +110,7 @@ class Withdraw extends Component
 
     protected function validateAmountAndDestination(): void
     {
-        $wallet = Auth::user()->wallet;
+        $wallet = Auth::guard('web')->user()->wallet;
 
         $this->validate([
             'amount' => ['required', 'numeric', 'min:10', 'max:'.$wallet->balance],
@@ -121,7 +122,7 @@ class Withdraw extends Component
 
     protected function savedDestination(): ?string
     {
-        $user = Auth::user();
+        $user = Auth::guard('web')->user();
 
         if ($this->method === 'bank_transfer') {
             return $user->bank_account_number
@@ -137,10 +138,10 @@ class Withdraw extends Component
         };
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.wallet.withdraw', [
-            'balance' => Auth::user()->wallet->balance,
+            'balance' => Auth::guard('web')->user()->wallet->balance,
             'cryptoCurrencies' => self::CRYPTO_CURRENCIES,
         ]);
     }

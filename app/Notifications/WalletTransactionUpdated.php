@@ -12,11 +12,17 @@ class WalletTransactionUpdated extends Notification
         //
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function via(object $notifiable): array
     {
         return ['database'];
     }
 
+    /**
+     * @return array{title: string, message: string, status: string, transaction_type: string, transaction_id: int}
+     */
     public function toDatabase(object $notifiable): array
     {
         $type = $this->transaction->type === 'withdrawal' ? 'Withdrawal' : 'Deposit';

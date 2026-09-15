@@ -6,6 +6,7 @@ use App\Models\SupportTicket;
 use App\Models\Trade;
 use App\Models\User;
 use App\Models\WalletTransaction;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -60,7 +61,8 @@ class UserShow extends Component
             'adjustAmount.max' => 'Debit amount exceeds the user\'s wallet balance.',
         ]);
 
-        $signedAmount = $this->adjustType === 'credit' ? $this->adjustAmount : -$this->adjustAmount;
+        $amount = (float) $this->adjustAmount;
+        $signedAmount = $this->adjustType === 'credit' ? $amount : -$amount;
 
         WalletTransaction::create([
             'wallet_id' => $wallet->id,
@@ -78,7 +80,7 @@ class UserShow extends Component
         $this->closeAdjustModal();
     }
 
-    public function render()
+    public function render(): View
     {
         $this->user->loadMissing('wallet', 'referrer');
 
@@ -89,7 +91,7 @@ class UserShow extends Component
             ->whereIn('status', self::SETTLED_STATUSES)
             ->sum('amount');
 
-        $totalWithdrawals = (float) abs(WalletTransaction::where('wallet_id', $wallet?->id)
+        $totalWithdrawals = abs((float) WalletTransaction::where('wallet_id', $wallet?->id)
             ->where('type', 'withdrawal')
             ->whereIn('status', self::SETTLED_STATUSES)
             ->sum('amount'));

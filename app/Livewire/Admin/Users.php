@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\User;
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
@@ -18,12 +19,12 @@ class Users extends Component
     #[Url(as: 'q')]
     public string $search = '';
 
-    public function updatedSearch()
+    public function updatedSearch(): void
     {
         $this->resetPage();
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.admin.users', [
             'users' => User::query()

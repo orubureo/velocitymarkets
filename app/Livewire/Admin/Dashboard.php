@@ -8,7 +8,9 @@ use App\Models\WalletTransaction;
 use App\Support\DailySeries;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -26,7 +28,7 @@ class Dashboard extends Component
      */
     private const SETTLED_STATUSES = ['approved', 'completed'];
 
-    public function render()
+    public function render(): View
     {
         $start = now()->startOfDay()->toImmutable()->subDays(self::WINDOW_DAYS - 1);
         $end = now()->endOfDay()->toImmutable();
@@ -88,6 +90,7 @@ class Dashboard extends Component
     }
 
     /**
+     * @param  Collection<int, string>  $spine
      * @return array{0: array<int, int>, 1: array<int, string>, 2: array<int, string>}
      */
     private function registrationSeries(Collection $spine, CarbonImmutable $start, CarbonImmutable $end): array
@@ -112,11 +115,13 @@ class Dashboard extends Component
     }
 
     /**
+     * @param  Collection<int, string>  $spine
      * @return array{0: array<int, float>, 1: array<int, float>}
      */
     private function transactionSeries(Collection $spine, CarbonImmutable $start, CarbonImmutable $end): array
     {
-        $rows = WalletTransaction::whereIn('type', ['deposit', 'withdrawal'])
+        $rows = DB::table('wallet_transactions')
+            ->whereIn('type', ['deposit', 'withdrawal'])
             ->whereIn('status', self::SETTLED_STATUSES)
             ->whereBetween('created_at', [$start, $end])
             ->selectRaw('DATE(created_at) as d, type, SUM(ABS(amount)) as total')

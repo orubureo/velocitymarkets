@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Market;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -33,7 +34,10 @@ class PriceService
         });
     }
 
-    public function supportedMarkets()
+    /**
+     * @return Collection<int, Market>
+     */
+    public function supportedMarkets(): Collection
     {
         return Market::where('is_active', true)->orderBy('sort_order')->get();
     }
@@ -41,6 +45,8 @@ class PriceService
     /**
      * Bulk-fetch official coin logos for every supported market in a single request,
      * keyed by coingecko_id.
+     *
+     * @return array<string, string>
      */
     public function marketIcons(): array
     {
@@ -51,6 +57,9 @@ class PriceService
      * Live ticker data (price + 24h change + icon) for a curated set of markets,
      * keyed by symbol so blade can look each one up directly. Pass no symbols to
      * get every supported market.
+     *
+     * @param  array<int, string>  $symbols
+     * @return array<int, array{symbol: string, display_name: string, price: int|float, change_pct: int|float|null, image: string|null}>
      */
     public function tickerMarkets(array $symbols = []): array
     {
@@ -85,6 +94,8 @@ class PriceService
      * Bulk snapshot (image, price, 24h change) for every supported market in a
      * single request, keyed by coingecko_id. Cached briefly so price/change stay
      * reasonably live without hammering the API on every request.
+     *
+     * @return array<int, array{id: string, image: string|null, price: int|float|null, change_pct: int|float|null}>
      */
     protected function marketSnapshots(): array
     {
@@ -102,7 +113,10 @@ class PriceService
                     'per_page' => 250,
                 ]);
 
-                return collect($response->json())
+                /** @var array<int, mixed> $coins */
+                $coins = $response->json() ?? [];
+
+                return collect($coins)
                     ->filter(fn ($coin) => is_array($coin) && isset($coin['id']))
                     ->map(fn ($coin) => [
                         'id' => $coin['id'],

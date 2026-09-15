@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\CopyTradeSubscription;
 use App\Models\Trade;
 use App\Models\UserInvestment;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -12,9 +13,9 @@ use Livewire\Component;
 #[Title('Dashboard')]
 class Dashboard extends Component
 {
-    public function render()
+    public function render(): View
     {
-        $wallet = Auth::user()->wallet;
+        $wallet = Auth::guard('web')->user()->wallet;
 
         $activeCopySubscriptions = CopyTradeSubscription::where('user_id', Auth::id())
             ->where('status', 'active')
@@ -33,7 +34,7 @@ class Dashboard extends Component
             'totalProfit' => $wallet->totalProfit(),
             'referralBonus' => $wallet->totalReferralBonus(),
             'totalWithdrawal' => $wallet->totalWithdrawals(),
-            'referralLink' => url('/register?ref='.Auth::user()->referral_code),
+            'referralLink' => url('/register?ref='.Auth::guard('web')->user()->referral_code),
             'recentTransactions' => $wallet->transactions()->latest()->take(5)->get(),
             'activeInvestments' => UserInvestment::where('user_id', Auth::id())
                 ->where('status', 'active')

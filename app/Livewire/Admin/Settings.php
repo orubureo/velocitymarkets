@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use Flux\Flux;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -11,6 +12,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
 #[Title('Admin Settings')]
@@ -29,7 +31,7 @@ class Settings extends Component
 
     public string $password_confirmation = '';
 
-    public $avatar = null;
+    public ?TemporaryUploadedFile $avatar = null;
 
     public function mount(): void
     {
@@ -108,7 +110,7 @@ class Settings extends Component
         Flux::toast(variant: 'success', text: __('Password updated.'));
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.admin.settings');
     }

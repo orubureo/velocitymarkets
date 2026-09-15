@@ -5,6 +5,7 @@ namespace App\Livewire\Trade;
 use App\Models\Trade;
 use App\Models\WalletTransaction;
 use App\Services\PriceService;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -20,15 +21,16 @@ class Place extends Component
 
     public string $positionsTab = 'active';
 
-    public function placeTrade(string $direction, PriceService $prices)
+    public function placeTrade(string $direction, PriceService $prices): void
     {
-        $wallet = Auth::user()->wallet;
+        $wallet = Auth::guard('web')->user()->wallet;
 
         $this->validate([
             'stake' => ['required', 'numeric', 'min:1', 'max:'.$wallet->balance],
             'expiryMinutes' => ['required', 'integer', 'min:1', 'max:60'],
         ]);
 
+        $stake = (float) $this->stake;
         $entryPrice = $prices->currentPrice($this->asset);
 
         $trade = Trade::create([
@@ -36,7 +38,7 @@ class Place extends Component
             'wallet_id' => $wallet->id,
             'asset' => $this->asset,
             'direction' => $direction,
-            'stake' => $this->stake,
+            'stake' => $stake,
             'entry_price' => $entryPrice,
             'status' => 'open',
             'expires_at' => now()->addMinutes($this->expiryMinutes),
@@ -45,21 +47,21 @@ class Place extends Component
         WalletTransaction::create([
             'wallet_id' => $wallet->id,
             'type' => 'trade_loss',
-            'amount' => -$this->stake,
+            'amount' => -$stake,
             'status' => 'completed',
             'reference_type' => Trade::class,
             'reference_id' => $trade->id,
             'note' => "Trade placed — {$this->asset} ".ucfirst($direction),
         ]);
 
-        $wallet->decrement('balance', $this->stake);
+        $wallet->decrement('balance', $stake);
 
         session()->flash('status', 'Trade placed.');
 
         $this->reset('stake');
     }
 
-    public function render(PriceService $prices)
+    public function render(PriceService $prices): View
     {
         $markets = $prices->supportedMarkets();
         $currentMarket = $markets->firstWhere('symbol', $this->asset);
@@ -71,11 +73,11 @@ class Place extends Component
             'tradingViewSymbol' => $currentMarket->tradingview_symbol ?? 'BINANCE:BTCUSDT',
             'openTrades' => Trade::where('user_id', Auth::id())->where('status', 'open')->latest()->get(),
             'closedTrades' => Trade::where('user_id', Auth::id())->whereIn('status', ['won', 'lost'])->latest('settled_at')->take(15)->get(),
-            'balance' => Auth::user()->wallet->balance,
+            'balance' => Auth::guard('web')->user()->wallet->balance,
         ]);
     }
 
-    public function updatedAsset(PriceService $prices)
+    public function updatedAsset(PriceService $prices): void
     {
         $market = $prices->supportedMarkets()->firstWhere('symbol', $this->asset);
         $this->dispatch('tv-symbol-changed', symbol: $market->tradingview_symbol ?? 'BINANCE:BTCUSDT');

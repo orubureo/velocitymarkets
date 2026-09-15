@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\SupportTicket;
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
@@ -26,17 +27,17 @@ class SupportTickets extends Component
 
     public string $response = '';
 
-    public function updatedSearch()
+    public function updatedSearch(): void
     {
         $this->resetPage();
     }
 
-    public function updatedStatusFilter()
+    public function updatedStatusFilter(): void
     {
         $this->resetPage();
     }
 
-    public function markInProgress(int $ticketId)
+    public function markInProgress(int $ticketId): void
     {
         $ticket = SupportTicket::findOrFail($ticketId);
 
@@ -49,20 +50,20 @@ class SupportTickets extends Component
         ]);
     }
 
-    public function openRespondModal(int $ticketId)
+    public function openRespondModal(int $ticketId): void
     {
         $this->respondingTicketId = $ticketId;
         $this->response = '';
         $this->showRespondModal = true;
     }
 
-    public function closeRespondModal()
+    public function closeRespondModal(): void
     {
         $this->showRespondModal = false;
         $this->reset(['respondingTicketId', 'response']);
     }
 
-    public function submitResponse()
+    public function submitResponse(): void
     {
         $this->validate([
             'response' => ['required', 'string', 'max:2000'],
@@ -85,7 +86,7 @@ class SupportTickets extends Component
         $this->closeRespondModal();
     }
 
-    public function render()
+    public function render(): View
     {
         $query = SupportTicket::with('user')
             ->when($this->search, function ($q) {

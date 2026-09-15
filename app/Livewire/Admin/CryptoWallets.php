@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\CryptoWallet;
+use Illuminate\Contracts\View\View;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -25,7 +26,7 @@ class CryptoWallets extends Component
         }
     }
 
-    public function addWallet()
+    public function addWallet(): void
     {
         $this->validate([
             'currency' => ['required', Rule::in(CryptoWallet::CURRENCIES)],
@@ -56,13 +57,13 @@ class CryptoWallets extends Component
         $this->reset(['address', 'network']);
     }
 
-    public function toggleActive(int $walletId)
+    public function toggleActive(int $walletId): void
     {
         $wallet = CryptoWallet::findOrFail($walletId);
         $wallet->update(['is_active' => ! $wallet->is_active]);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.admin.crypto-wallets', [
             'wallets' => CryptoWallet::orderBy('currency')->orderBy('network')->get(),

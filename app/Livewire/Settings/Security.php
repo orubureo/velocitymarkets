@@ -77,11 +77,13 @@ class Security extends Component
         $this->canManageTwoFactor = Features::canManageTwoFactorAuthentication();
 
         if ($this->canManageTwoFactor) {
-            if (Fortify::confirmsTwoFactorAuthentication() && is_null(auth()->user()->two_factor_confirmed_at)) {
-                $disableTwoFactorAuthentication(auth()->user());
+            $user = Auth::guard('web')->user();
+
+            if (Fortify::confirmsTwoFactorAuthentication() && is_null($user->two_factor_confirmed_at)) {
+                $disableTwoFactorAuthentication($user);
             }
 
-            $this->twoFactorEnabled = auth()->user()->hasEnabledTwoFactorAuthentication();
+            $this->twoFactorEnabled = $user->hasEnabledTwoFactorAuthentication();
             $this->requiresConfirmation = Features::optionEnabled(Features::twoFactorAuthentication(), 'confirm');
         }
 
@@ -108,7 +110,7 @@ class Security extends Component
             throw $e;
         }
 
-        Auth::user()->update([
+        Auth::guard('web')->user()->update([
             'password' => $validated['password'],
         ]);
 
@@ -122,7 +124,7 @@ class Security extends Component
      */
     public function loadPasskeys(): void
     {
-        $this->passkeys = Auth::user()->passkeys()
+        $this->passkeys = Auth::guard('web')->user()->passkeys()
             ->select(['id', 'name', 'credential', 'created_at', 'last_used_at'])
             ->latest()
             ->get()
@@ -141,7 +143,7 @@ class Security extends Component
      */
     public function confirmDelete(int $passkeyId): void
     {
-        $passkey = Auth::user()->passkeys()->findOrFail($passkeyId);
+        $passkey = Auth::guard('web')->user()->passkeys()->findOrFail($passkeyId);
 
         $this->deletingPasskeyId = $passkey->id;
         $this->deletingPasskeyName = $passkey->name;
@@ -157,7 +159,7 @@ class Security extends Component
             return;
         }
 
-        $user = Auth::user();
+        $user = Auth::guard('web')->user();
         $passkey = $user->passkeys()->findOrFail($this->deletingPasskeyId);
 
         $deletePasskey($user, $passkey);
@@ -181,10 +183,12 @@ class Security extends Component
      */
     public function enable(EnableTwoFactorAuthentication $enableTwoFactorAuthentication): void
     {
-        $enableTwoFactorAuthentication(auth()->user());
+        $user = Auth::guard('web')->user();
+
+        $enableTwoFactorAuthentication($user);
 
         if (! $this->requiresConfirmation) {
-            $this->twoFactorEnabled = auth()->user()->hasEnabledTwoFactorAuthentication();
+            $this->twoFactorEnabled = $user->hasEnabledTwoFactorAuthentication();
         }
 
         $this->loadSetupData();
@@ -197,7 +201,7 @@ class Security extends Component
      */
     private function loadSetupData(): void
     {
-        $user = auth()->user();
+        $user = Auth::guard('web')->user();
 
         try {
             $this->qrCodeSvg = $user?->twoFactorQrCodeSvg();
@@ -232,7 +236,7 @@ class Security extends Component
     {
         $this->validate();
 
-        $confirmTwoFactorAuthentication(auth()->user(), $this->code);
+        $confirmTwoFactorAuthentication(Auth::guard('web')->user(), $this->code);
 
         $this->closeModal();
 
@@ -254,7 +258,7 @@ class Security extends Component
      */
     public function disable(DisableTwoFactorAuthentication $disableTwoFactorAuthentication): void
     {
-        $disableTwoFactorAuthentication(auth()->user());
+        $disableTwoFactorAuthentication(Auth::guard('web')->user());
 
         $this->twoFactorEnabled = false;
     }
@@ -275,7 +279,7 @@ class Security extends Component
         $this->resetErrorBag();
 
         if (! $this->requiresConfirmation) {
-            $this->twoFactorEnabled = auth()->user()->hasEnabledTwoFactorAuthentication();
+            $this->twoFactorEnabled = Auth::guard('web')->user()->hasEnabledTwoFactorAuthentication();
         }
     }
 

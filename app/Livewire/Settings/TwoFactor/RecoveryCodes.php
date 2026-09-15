@@ -3,6 +3,7 @@
 namespace App\Livewire\Settings\TwoFactor;
 
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Fortify\Actions\GenerateNewRecoveryCodes;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -36,7 +37,7 @@ class RecoveryCodes extends Component
      */
     private function loadRecoveryCodes(): void
     {
-        $user = auth()->user();
+        $user = Auth::guard('web')->user();
 
         if ($user->hasEnabledTwoFactorAuthentication() && $user->two_factor_recovery_codes) {
             try {

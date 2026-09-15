@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Market;
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -19,7 +20,7 @@ class Markets extends Component
 
     public string $tradingviewSymbol = '';
 
-    public function addMarket()
+    public function addMarket(): void
     {
         $this->validate([
             'symbol' => ['required', 'string', 'max:20'],
@@ -39,13 +40,13 @@ class Markets extends Component
         $this->reset(['symbol', 'displayName', 'coingeckoId', 'tradingviewSymbol']);
     }
 
-    public function toggleActive(int $marketId)
+    public function toggleActive(int $marketId): void
     {
         $market = Market::findOrFail($marketId);
         $market->update(['is_active' => ! $market->is_active]);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.admin.markets', [
             'markets' => Market::orderBy('sort_order')->get(),

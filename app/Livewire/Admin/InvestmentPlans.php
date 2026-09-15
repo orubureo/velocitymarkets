@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\InvestmentPlan;
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -23,7 +24,7 @@ class InvestmentPlans extends Component
 
     public string $durationDays = '';
 
-    public function addPlan()
+    public function addPlan(): void
     {
         $this->validate([
             'name' => ['required', 'string', 'max:100'],
@@ -47,13 +48,13 @@ class InvestmentPlans extends Component
         $this->reset(['name', 'description', 'minAmount', 'maxAmount', 'roiPercent', 'durationDays']);
     }
 
-    public function toggleActive(int $planId)
+    public function toggleActive(int $planId): void
     {
         $plan = InvestmentPlan::findOrFail($planId);
         $plan->update(['is_active' => ! $plan->is_active]);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.admin.investment-plans', [
             'plans' => InvestmentPlan::orderBy('sort_order')->get(),

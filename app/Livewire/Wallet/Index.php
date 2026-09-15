@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Wallet;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
@@ -25,10 +26,10 @@ class Index extends Component
         $this->tab = $tab;
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.wallet.index', [
-            'balance' => Auth::user()->wallet->balance,
+            'balance' => Auth::guard('web')->user()->wallet->balance,
         ]);
     }
 }
