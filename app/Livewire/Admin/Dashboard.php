@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\WalletTransaction;
 use App\Support\DailySeries;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -151,7 +152,7 @@ class Dashboard extends Component
         return (float) ($totals['deposit'] ?? 0) - (float) ($totals['withdrawal'] ?? 0);
     }
 
-    private function settledVolume(\Carbon\CarbonInterface $from, \Carbon\CarbonInterface $to): float
+    private function settledVolume(CarbonInterface $from, CarbonInterface $to): float
     {
         return (float) (WalletTransaction::whereIn('status', self::SETTLED_STATUSES)
             ->whereBetween('created_at', [$from, $to])

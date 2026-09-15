@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Market;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
@@ -26,7 +27,7 @@ class PriceService
                 }
 
                 return $price;
-            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            } catch (ConnectionException $e) {
                 return (float) Cache::get("price:{$symbol}:last_known", 0);
             }
         });
@@ -110,7 +111,7 @@ class PriceService
                         'change_pct' => $coin['price_change_percentage_24h'] ?? null,
                     ])
                     ->all();
-            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            } catch (ConnectionException $e) {
                 return [];
             }
         });

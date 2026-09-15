@@ -13,8 +13,11 @@ use Livewire\Component;
 class Place extends Component
 {
     public string $asset = 'BTCUSDT';
+
     public string $stake = '';
+
     public int $expiryMinutes = 5;
+
     public string $positionsTab = 'active';
 
     public function placeTrade(string $direction, PriceService $prices)
@@ -22,7 +25,7 @@ class Place extends Component
         $wallet = Auth::user()->wallet;
 
         $this->validate([
-            'stake' => ['required', 'numeric', 'min:1', 'max:' . $wallet->balance],
+            'stake' => ['required', 'numeric', 'min:1', 'max:'.$wallet->balance],
             'expiryMinutes' => ['required', 'integer', 'min:1', 'max:60'],
         ]);
 
@@ -46,7 +49,7 @@ class Place extends Component
             'status' => 'completed',
             'reference_type' => Trade::class,
             'reference_id' => $trade->id,
-            'note' => "Trade placed — {$this->asset} " . ucfirst($direction),
+            'note' => "Trade placed — {$this->asset} ".ucfirst($direction),
         ]);
 
         $wallet->decrement('balance', $this->stake);
@@ -77,5 +80,4 @@ class Place extends Component
         $market = $prices->supportedMarkets()->firstWhere('symbol', $this->asset);
         $this->dispatch('tv-symbol-changed', symbol: $market->tradingview_symbol ?? 'BINANCE:BTCUSDT');
     }
-
 }

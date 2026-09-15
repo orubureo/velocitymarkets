@@ -6,10 +6,12 @@ use App\Models\Trade;
 use App\Models\WalletTransaction;
 use App\Services\PriceService;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class SettleTrades extends Command
 {
     protected $signature = 'trades:settle';
+
     protected $description = 'Settle expired open trades';
 
     public function handle(PriceService $prices): void
@@ -21,8 +23,9 @@ class SettleTrades extends Command
         foreach ($trades as $trade) {
             try {
                 $exitPrice = $prices->currentPrice($trade->asset);
-            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            } catch (ModelNotFoundException $e) {
                 $this->warn("Skipping trade #{$trade->id}: no active market for asset \"{$trade->asset}\".");
+
                 continue;
             }
 
@@ -47,7 +50,7 @@ class SettleTrades extends Command
                     'status' => 'completed',
                     'reference_type' => Trade::class,
                     'reference_id' => $trade->id,
-                    'note' => "Trade won — {$trade->asset} " . ucfirst($trade->direction),
+                    'note' => "Trade won — {$trade->asset} ".ucfirst($trade->direction),
                 ]);
 
                 $trade->wallet->increment('balance', $payout);

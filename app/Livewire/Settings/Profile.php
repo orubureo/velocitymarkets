@@ -16,8 +16,11 @@ class Profile extends Component
     use ProfileValidationRules;
 
     public string $name = '';
+
     public string $email = '';
+
     public string $phone = '';
+
     public string $country = '';
 
     /**

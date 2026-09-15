@@ -11,12 +11,19 @@ use Livewire\Component;
 class Payment extends Component
 {
     public string $bank_name = '';
+
     public string $bank_account_name = '';
+
     public string $bank_account_number = '';
+
     public string $swift_code = '';
+
     public string $btc_address = '';
+
     public string $eth_address = '';
+
     public string $ltc_address = '';
+
     public string $usdt_address = '';
 
     /**

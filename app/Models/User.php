@@ -7,6 +7,9 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -34,7 +37,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
     'kyc_submitted_at', 'kyc_reviewed_at', 'kyc_rejection_reason',
     'phone', 'country',
     'bank_name', 'bank_account_name', 'bank_account_number', 'swift_code',
-    'btc_address', 'eth_address', 'ltc_address', 'usdt_address'
+    'btc_address', 'eth_address', 'ltc_address', 'usdt_address',
 ])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements PasskeyUser
@@ -65,26 +68,26 @@ class User extends Authenticatable implements PasskeyUser
         $initials = Str::initials($this->name, true);
 
         return Str::length($initials) > 1
-            ? Str::substr($initials, 0, 1) . Str::substr($initials, -1)
+            ? Str::substr($initials, 0, 1).Str::substr($initials, -1)
             : $initials;
     }
 
-    public function wallet(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function wallet(): HasOne
     {
         return $this->hasOne(Wallet::class);
     }
 
-    public function referrer(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function referrer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'referred_by');
     }
 
-    public function referrals(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function referrals(): HasMany
     {
         return $this->hasMany(User::class, 'referred_by');
     }
 
-    public function supportTickets(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function supportTickets(): HasMany
     {
         return $this->hasMany(SupportTicket::class);
     }

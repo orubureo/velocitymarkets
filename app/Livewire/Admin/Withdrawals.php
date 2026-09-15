@@ -22,6 +22,7 @@ class Withdrawals extends Component
         // multiple pending withdrawals together exceed what's actually available now.
         if ($wallet->balance < abs($transaction->amount)) {
             session()->flash('error', 'Cannot approve — insufficient wallet balance.');
+
             return;
         }
 

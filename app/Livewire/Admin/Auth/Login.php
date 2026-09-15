@@ -12,6 +12,7 @@ use Livewire\Component;
 class Login extends Component
 {
     public string $email = '';
+
     public string $password = '';
 
     public function login()
@@ -21,8 +22,9 @@ class Login extends Component
             'password' => ['required'],
         ]);
 
-        if (!Auth::guard('admin')->attempt(['email' => $this->email, 'password' => $this->password])) {
+        if (! Auth::guard('admin')->attempt(['email' => $this->email, 'password' => $this->password])) {
             $this->addError('email', 'Invalid credentials.');
+
             return;
         }
 

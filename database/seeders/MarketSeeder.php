@@ -16,7 +16,7 @@ class MarketSeeder extends Seeder
         $json = File::get(base_path('crypto_pairs.json'));
         $pairs = json_decode($json, true);
 
-        $this->command->info('Seeding ' . count($pairs) . ' markets...');
+        $this->command->info('Seeding '.count($pairs).' markets...');
 
         foreach ($pairs as $index => $pair) {
             Market::updateOrCreate(

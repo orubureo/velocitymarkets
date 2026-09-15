@@ -16,7 +16,7 @@ class Referral extends Component
 
     public function render()
     {
-        $user     = Auth::user();
+        $user = Auth::user();
         $referrer = $user->referrer;
         $referrals = $user->referrals()->with('wallet')->latest()->get();
 
@@ -25,12 +25,12 @@ class Referral extends Component
             : 0.0;
 
         return view('livewire.referral', [
-            'referralCode'     => $user->referral_code ?? 'N/A',
-            'referralLink'     => url('/register?ref=' . ($user->referral_code ?? '')),
-            'sponsor'          => $referrer?->name ?? '—',
-            'totalReferrals'   => $referrals->count(),
+            'referralCode' => $user->referral_code ?? 'N/A',
+            'referralLink' => url('/register?ref='.($user->referral_code ?? '')),
+            'sponsor' => $referrer?->name ?? '—',
+            'totalReferrals' => $referrals->count(),
             'referralEarnings' => $referralEarnings,
-            'referrals'        => $referrals,
+            'referrals' => $referrals,
         ]);
     }
 }

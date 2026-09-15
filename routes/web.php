@@ -8,6 +8,8 @@ use App\Livewire\Admin\InvestmentPlans;
 use App\Livewire\Admin\Investments;
 use App\Livewire\Admin\Kyc;
 use App\Livewire\Admin\Markets;
+use App\Livewire\Admin\Notifications;
+use App\Livewire\Admin\Settings;
 use App\Livewire\Admin\SupportTickets;
 use App\Livewire\Admin\Users;
 use App\Livewire\Admin\UserShow;
@@ -79,8 +81,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('copy-subscriptions', CopySubscriptions::class)->name('copy-subscriptions');
         Route::get('kyc', Kyc::class)->name('kyc');
         Route::get('support-tickets', SupportTickets::class)->name('support-tickets');
-        Route::get('settings', App\Livewire\Admin\Settings::class)->name('settings');
-        Route::get('notifications', App\Livewire\Admin\Notifications::class)->name('notifications');
+        Route::get('settings', Settings::class)->name('settings');
+        Route::get('notifications', Notifications::class)->name('notifications');
         Route::get('deposits/{transaction}/proof', function (WalletTransaction $transaction) {
             abort_unless($transaction->proof_path, 404);
 

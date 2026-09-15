@@ -12,8 +12,11 @@ use Livewire\Component;
 class Markets extends Component
 {
     public string $symbol = '';
+
     public string $displayName = '';
+
     public string $coingeckoId = '';
+
     public string $tradingviewSymbol = '';
 
     public function addMarket()
@@ -39,7 +42,7 @@ class Markets extends Component
     public function toggleActive(int $marketId)
     {
         $market = Market::findOrFail($marketId);
-        $market->update(['is_active' => !$market->is_active]);
+        $market->update(['is_active' => ! $market->is_active]);
     }
 
     public function render()

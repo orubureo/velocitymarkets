@@ -27,9 +27,9 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn([
-                'phone', 'username', 'country', 
+                'phone', 'username', 'country',
                 'bank_name', 'bank_account_name', 'bank_account_number', 'swift_code',
-                'btc_address', 'eth_address', 'ltc_address', 'usdt_address'
+                'btc_address', 'eth_address', 'ltc_address', 'usdt_address',
             ]);
         });
     }
