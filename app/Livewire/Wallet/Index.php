@@ -28,8 +28,10 @@ class Index extends Component
 
     public function render(): View
     {
+        $user = Auth::guard('web')->user();
+
         return view('livewire.wallet.index', [
-            'balance' => Auth::guard('web')->user()->wallet->balance,
+            'balance' => $user->wallet->balance,
         ]);
     }
 }

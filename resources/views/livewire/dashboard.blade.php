@@ -1,13 +1,14 @@
 <div class="flex flex-col gap-6 stagger-children">
 
     {{-- Welcome Header --}}
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div class="flex flex-row items-center justify-between gap-3 flex-wrap">
         <div>
             <flux:heading size="xl" class="text-zinc-900 dark:text-white">Welcome back,
                 {{ explode(' ', auth()->user()->name)[0] }}</flux:heading>
             <flux:text class="text-zinc-500">Here's an overview of your account.</flux:text>
         </div>
         <div class="flex items-center gap-2">
+            <x-account-tier-badge :tier="auth()->user()->accountTier" />
             <span class="hidden sm:inline text-xs font-mono text-zinc-400 dark:text-zinc-500">{{ now()->format('M j, Y') }} &middot; {{ now()->format('h:i A') }}</span>
         </div>
     </div>
@@ -127,101 +128,77 @@
         </flux:card>
     </div>
 
-    {{-- Trading Activity --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {{-- Open Trades --}}
-        <flux:card class="trading-card group flex flex-col gap-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="stat-icon-brand !rounded-xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                        <flux:icon name="chart-bar-square" class="size-5" />
-                    </div>
-                    <div>
-                        <flux:heading size="sm">Open Trades</flux:heading>
-                        <flux:text size="sm" class="text-zinc-500">
-                            {{ $openTrades->count() }} active
-                            position{{ $openTrades->count() === 1 ? '' : 's' }} &middot; $
-                            {{ number_format($openTradesStake, 2) }} staked
-                        </flux:text>
-                    </div>
-                </div>
-                <flux:link :href="route('trade')" wire:navigate class="group/link inline-flex items-center gap-1 text-sm font-medium text-teal-500 shrink-0">
-                    Trade <flux:icon name="arrow-right" class="size-3.5 transition-transform duration-200 group-hover/link:translate-x-0.5" />
-                </flux:link>
-            </div>
+    {{-- Market Overview --}}
+    <div class="flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+            <flux:heading size="lg" class="text-zinc-900 dark:text-white">Market Overview</flux:heading>
+            <flux:link :href="route('trade')" wire:navigate class="group/link inline-flex items-center gap-1 text-sm font-medium text-teal-500">
+                View All Markets <flux:icon name="arrow-right" class="size-3.5 transition-transform duration-200 group-hover/link:translate-x-0.5" />
+            </flux:link>
+        </div>
 
-            <div class="flex flex-col">
-                @forelse ($openTrades->take(3) as $trade)
-                    <div
-                        class="flex items-center justify-between py-2.5 px-2 -mx-2 rounded-lg transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50 {{ ! $loop->last ? 'border-b border-zinc-100 dark:border-zinc-800' : '' }}">
-                        <div class="flex items-center gap-2.5">
-                            <flux:badge size="sm" color="{{ $trade->direction === 'rise' ? 'lime' : 'red' }}">
-                                {{ strtoupper($trade->direction) }}
-                            </flux:badge>
-                            <span class="text-sm font-medium text-zinc-900 dark:text-white">{{ $trade->asset }}</span>
-                        </div>
-                        <span class="text-sm font-mono text-zinc-500">${{ number_format($trade->stake, 2) }}</span>
-                    </div>
-                @empty
-                    <div class="flex flex-col items-center justify-center gap-2 py-6 text-center">
-                        <flux:icon name="chart-bar-square" class="size-6 text-zinc-300 dark:text-zinc-700" />
-                        <flux:text size="sm" class="text-zinc-500">No open trades right now.</flux:text>
-                    </div>
-                @endforelse
-            </div>
-        </flux:card>
+        <flux:card class="trading-card !p-0 overflow-hidden">
+            <flux:table>
+                <flux:table.columns>
+                    <flux:table.column>Cryptocurrency</flux:table.column>
+                    <flux:table.column class="hidden md:table-cell">Price</flux:table.column>
+                    <flux:table.column class="hidden md:table-cell">24h Change</flux:table.column>
+                    <flux:table.column>Actions</flux:table.column>
+                </flux:table.columns>
 
-        {{-- Copy Trading --}}
-        <flux:card class="trading-card group flex flex-col gap-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="p-2 rounded-xl bg-cyan-500/10 text-cyan-500 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                        <flux:icon name="sparkles" class="size-5" />
-                    </div>
-                    <div>
-                        <flux:heading size="sm">Copy Trading</flux:heading>
-                        <flux:text size="sm" class="text-zinc-500">
-                            {{ $activeCopySubscriptions->count() }}
-                            trader{{ $activeCopySubscriptions->count() === 1 ? '' : 's' }} copied
-                            @if ($activeCopySubscriptions->isNotEmpty())
-                                &middot; <span
-                                    class="{{ $copyNetPnl >= 0 ? 'text-green-500' : 'text-red-500' }}">{{ $copyNetPnl >= 0 ? '+' : '-' }}${{ number_format(abs($copyNetPnl), 2) }}</span>
-                                net
-                            @endif
-                        </flux:text>
-                    </div>
-                </div>
-                <flux:link :href="route('copy-trading')" wire:navigate class="group/link inline-flex items-center gap-1 text-sm font-medium text-cyan-500 shrink-0">
-                    Explore <flux:icon name="arrow-right" class="size-3.5 transition-transform duration-200 group-hover/link:translate-x-0.5" />
-                </flux:link>
-            </div>
-
-            <div class="flex flex-col">
-                @forelse ($activeCopySubscriptions->take(3) as $sub)
-                    <div
-                        class="flex items-center justify-between py-2.5 px-2 -mx-2 rounded-lg transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50 {{ ! $loop->last ? 'border-b border-zinc-100 dark:border-zinc-800' : '' }}">
-                        <div class="flex items-center gap-2.5">
-                            <div class="size-6 rounded-full bg-cyan-500/10 flex items-center justify-center text-[10px] font-semibold text-cyan-600 dark:text-cyan-400 shrink-0">
-                                {{ strtoupper(substr($sub->trader->name, 0, 1)) }}
-                            </div>
-                            <span class="text-sm font-medium text-zinc-900 dark:text-white">{{ $sub->trader->name }}</span>
-                        </div>
-                        <span class="text-sm font-mono {{ $sub->netPnl() >= 0 ? 'text-green-500' : 'text-red-500' }}">
-                            {{ $sub->netPnl() >= 0 ? '+' : '-' }}${{ number_format(abs($sub->netPnl()), 2) }}
-                        </span>
-                    </div>
-                @empty
-                    <div class="flex flex-col items-center justify-center gap-2 py-6 text-center">
-                        <flux:icon name="sparkles" class="size-6 text-zinc-300 dark:text-zinc-700" />
-                        <flux:text size="sm" class="text-zinc-500">You're not copying any traders yet.</flux:text>
-                    </div>
-                @endforelse
-            </div>
+                <flux:table.rows>
+                    @forelse ($marketOverview as $market)
+                        @php
+                            $baseCurrency = preg_replace('/USDT$/', '', $market['symbol']) ?: $market['symbol'];
+                            $change = $market['change_pct'] ?? 0;
+                        @endphp
+                        <flux:table.row wire:key="dash-market-{{ $market['symbol'] }}" class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+                            <flux:table.cell>
+                                <a href="{{ route('trade.show', $market['symbol']) }}" wire:navigate class="flex items-center gap-2.5 min-w-0">
+                                    <x-crypto-icon :currency="$baseCurrency" :url="$market['image']" class="size-8 shrink-0" />
+                                    <div class="min-w-0">
+                                        <div class="font-bold text-zinc-900 dark:text-white truncate">{{ $market['display_name'] }}</div>
+                                        <div class="text-xs text-zinc-500">{{ $market['symbol'] }}</div>
+                                        {{-- Price/change move in here on mobile since their own columns are hidden --}}
+                                        <div class="md:hidden flex items-center gap-1.5 mt-0.5 font-mono text-xs">
+                                            <span class="text-zinc-700 dark:text-zinc-300">${{ number_format($market['price'], $market['price'] < 1 ? 4 : 2) }}</span>
+                                            <span class="inline-flex items-center gap-0.5 font-semibold {{ $change >= 0 ? 'text-green-500' : 'text-red-500' }}">
+                                                <flux:icon name="{{ $change >= 0 ? 'arrow-up' : 'arrow-down' }}" class="size-2.5" />
+                                                {{ number_format(abs($change), 2) }}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </flux:table.cell>
+                            <flux:table.cell class="font-mono hidden md:table-cell">${{ number_format($market['price'], $market['price'] < 1 ? 4 : 2) }}</flux:table.cell>
+                            <flux:table.cell class="hidden md:table-cell">
+                                <span class="inline-flex items-center gap-1 font-mono font-semibold {{ $change >= 0 ? 'text-green-500' : 'text-red-500' }}">
+                                    <flux:icon name="{{ $change >= 0 ? 'arrow-up' : 'arrow-down' }}" class="size-3" />
+                                    {{ number_format(abs($change), 2) }}%
+                                </span>
+                            </flux:table.cell>
+                            <flux:table.cell>
+                                <a href="{{ route('trade.show', $market['symbol']) }}" wire:navigate
+                                    class="px-3 py-1.5 rounded-lg bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold transition-colors whitespace-nowrap">
+                                    Trade
+                                </a>
+                            </flux:table.cell>
+                        </flux:table.row>
+                    @empty
+                        <flux:table.row>
+                            <flux:table.cell colspan="4" class="text-center text-zinc-500 py-8">
+                                Market data is temporarily unavailable.
+                            </flux:table.cell>
+                        </flux:table.row>
+                    @endforelse
+                </flux:table.rows>
+            </flux:table>
         </flux:card>
     </div>
 
-    {{-- Investment Plans --}}
-    <div class="flex flex-col gap-4 mt-2">
+    {{-- Active Investment Plans + Refer & Earn --}}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+    <div class="flex flex-col gap-4 lg:col-span-2">
         <div class="flex items-center justify-between">
             <flux:heading size="lg" class="text-zinc-900 dark:text-white">Active Investment Plans</flux:heading>
             <flux:link :href="route('investment.plans')" wire:navigate class="group/link inline-flex items-center gap-1 text-sm font-medium text-violet-500">
@@ -231,7 +208,7 @@
 
         @if ($activeInvestments->isEmpty())
             <flux:card
-                class="flex flex-col items-center justify-center gap-3 border border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-900/50 text-center py-10">
+                class="flex-1 flex flex-col items-center justify-center gap-3 border border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-900/50 text-center py-10">
                 <div
                     class="p-3 bg-white dark:bg-zinc-950 rounded-full shadow-sm border border-zinc-200 dark:border-zinc-800 mb-2">
                     <flux:icon name="briefcase" class="size-6 text-zinc-400" />
@@ -244,7 +221,7 @@
                 </flux:button>
             </flux:card>
         @else
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div class="flex-1 grid grid-cols-1 gap-4 sm:grid-cols-2 auto-rows-fr">
                 @foreach ($activeInvestments as $investment)
                     <flux:card wire:key="dash-investment-{{ $investment->id }}"
                         class="trading-card flex flex-col gap-4 relative overflow-hidden group">
@@ -303,24 +280,126 @@
         @endif
     </div>
 
-    {{-- Referral Link --}}
-    <flux:card class="trading-card group flex flex-col gap-3 relative overflow-hidden">
-        <div class="absolute -top-10 -right-10 size-40 bg-teal-500/5 rounded-full blur-2xl pointer-events-none animate-blob-drift"></div>
-        <div class="flex items-center gap-2.5 relative z-10">
-            <div class="stat-icon-brand !rounded-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                <flux:icon name="user-group" class="size-5" />
+        {{-- Refer & Earn --}}
+        <flux:card class="trading-card flex flex-col gap-5">
+            <div class="flex items-center justify-between">
+                <flux:heading size="lg" class="text-zinc-900 dark:text-white">Refer &amp; Earn</flux:heading>
+                <flux:link :href="route('referral')" wire:navigate class="group/link inline-flex items-center gap-1 text-sm font-medium text-teal-500 shrink-0">
+                    Details <flux:icon name="chevron-right" class="size-3.5 transition-transform duration-200 group-hover/link:translate-x-0.5" />
+                </flux:link>
             </div>
-            <flux:heading size="sm">Your Referral Link</flux:heading>
+
+            <div class="flex items-start gap-3 p-4 rounded-xl bg-amber-500/5 border border-amber-500/10">
+                <div class="p-2 rounded-full bg-amber-500/15 text-amber-500 shrink-0">
+                    <flux:icon name="user-group" class="size-5" />
+                </div>
+                <div>
+                    <flux:heading size="sm">Earn Through Referrals</flux:heading>
+                    <flux:text size="sm" class="text-zinc-500">Earn commission when someone signs up using your link</flux:text>
+                </div>
+            </div>
+
+            <div x-data="{ copied: false }">
+                <flux:text size="sm" class="text-zinc-500 mb-1.5 block">Your Referral Link</flux:text>
+                <div class="flex items-center gap-2">
+                    <flux:input readonly value="{{ $referralLink }}" class="flex-1 font-mono text-sm bg-zinc-50 dark:bg-zinc-950" />
+                    <flux:button
+                        x-on:click="navigator.clipboard.writeText('{{ $referralLink }}'); copied = true; setTimeout(() => copied = false, 2000)"
+                        icon="clipboard" variant="primary" class="shrink-0">
+                        <span x-show="!copied">Copy</span>
+                        <span x-show="copied" x-cloak>Copied!</span>
+                    </flux:button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-950/60">
+                    <flux:text size="sm" class="text-zinc-500">Total Referrals</flux:text>
+                    <div class="text-xl font-bold text-zinc-900 dark:text-white mt-0.5">{{ $totalReferrals }}</div>
+                </div>
+                <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-950/60">
+                    <flux:text size="sm" class="text-zinc-500">Earnings</flux:text>
+                    <div class="text-xl font-bold font-mono text-zinc-900 dark:text-white mt-0.5">$ {{ number_format($referralBonus, 2) }}</div>
+                </div>
+            </div>
+        </flux:card>
+    </div>
+
+    {{-- Featured Expert Traders --}}
+    <flux:card class="trading-card flex flex-col gap-5">
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+            <div>
+                <div class="flex items-center gap-2">
+                    <flux:icon name="arrow-trending-up" class="size-5 text-teal-500" />
+                    <flux:heading size="lg" class="text-zinc-900 dark:text-white">Featured Expert Traders</flux:heading>
+                </div>
+                <flux:text size="sm" class="text-zinc-500">Copy profitable traders automatically</flux:text>
+            </div>
+            <flux:link :href="route('copy-trading')" wire:navigate class="group/link inline-flex items-center gap-1 text-sm font-medium text-teal-500 shrink-0">
+                View all <flux:icon name="arrow-right" class="size-3.5 transition-transform duration-200 group-hover/link:translate-x-0.5" />
+            </flux:link>
         </div>
-        <div class="flex gap-2 relative z-10" x-data="{ copied: false }">
-            <flux:input readonly value="{{ $referralLink }}" class="font-mono text-sm bg-zinc-50 dark:bg-zinc-950" />
-            <flux:button
-                x-on:click="navigator.clipboard.writeText('{{ $referralLink }}'); copied = true; setTimeout(() => copied = false, 2000)"
-                icon="clipboard" variant="primary">
-                <span x-show="!copied">Copy</span>
-                <span x-show="copied" x-cloak>Copied!</span>
-            </flux:button>
+
+        <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+            @forelse ($featuredTraders as $trader)
+                <flux:card wire:key="dash-featured-{{ $trader->id }}" class="trading-card group flex flex-col gap-4">
+                    <div class="flex items-center gap-3">
+                        <span class="flex size-11 rounded-full overflow-hidden bg-zinc-100 shrink-0">
+                            <img src="{{ $trader->avatarUrl() }}" alt="{{ $trader->name }}" loading="lazy"
+                                class="w-full h-full object-cover" onerror="avatarImgFallback(this, '{{ $trader->avatar_initials ?? substr($trader->name, 0, 2) }}')">
+                        </span>
+                        <flux:heading size="sm" class="truncate">{{ $trader->name }}</flux:heading>
+                    </div>
+
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        @php $risk = $trader->riskBadgeClasses(); @endphp
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold {{ $risk['pill'] }}">
+                            <span class="size-1.5 rounded-full {{ $risk['dot'] }}"></span>
+                            {{ ucfirst($trader->risk_level) }}
+                        </span>
+                        @if ($trader->tier === 'elite')
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20">
+                                <flux:icon name="check-circle" variant="solid" class="size-3" /> Top
+                            </span>
+                        @endif
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2 p-3 bg-zinc-50 dark:bg-zinc-950/60 rounded-xl">
+                        <div>
+                            <flux:text size="xs" class="text-zinc-500 uppercase tracking-wide font-semibold">ROI</flux:text>
+                            <flux:heading size="sm" class="font-mono text-green-500 mt-0.5">+{{ $trader->roi_30d }}%</flux:heading>
+                        </div>
+                        <div>
+                            <flux:text size="xs" class="text-zinc-500 uppercase tracking-wide font-semibold">Win Rate</flux:text>
+                            <flux:heading size="sm" class="font-mono text-zinc-900 dark:text-white mt-0.5">{{ $trader->win_rate }}%</flux:heading>
+                        </div>
+                        <div>
+                            <flux:text size="xs" class="text-zinc-500 uppercase tracking-wide font-semibold">Copiers</flux:text>
+                            <flux:heading size="sm" class="font-mono text-zinc-900 dark:text-white mt-0.5">{{ number_format($trader->totalCopiers()) }}</flux:heading>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-1.5 text-xs text-zinc-500">
+                        <flux:icon name="users" variant="outline" class="size-3.5" />
+                        {{ number_format($trader->totalCopiers()) }} followers
+                    </div>
+
+                    <flux:button variant="primary" class="w-full" icon="document-duplicate" :href="route('copy-trading')" wire:navigate>
+                        Copy Trader
+                    </flux:button>
+                </flux:card>
+            @empty
+                <flux:card class="md:col-span-3 flex flex-col items-center justify-center gap-2 py-10 text-center">
+                    <flux:icon name="sparkles" class="size-6 text-zinc-300 dark:text-zinc-700" />
+                    <flux:text class="text-zinc-500">No featured traders available right now.</flux:text>
+                </flux:card>
+            @endforelse
         </div>
+
+        <flux:callout icon="information-circle" color="teal">
+            <flux:callout.heading>Automated Copy Trading</flux:callout.heading>
+            <flux:callout.text>These expert traders have automatic profit distribution enabled. Your investment will earn returns based on their trading performance.</flux:callout.text>
+        </flux:callout>
     </flux:card>
 
     {{-- Recent Transactions --}}
@@ -353,7 +432,11 @@
                                             name="{{ $transaction->amount >= 0 ? 'arrow-down-left' : 'arrow-up-right' }}"
                                             class="size-3" />
                                     </div>
-                                    {{ str_replace('_', ' ', $transaction->type) }}
+                                    {{ match ($transaction->type) {
+                                        'roi_payout' => 'ROI Payout',
+                                        'admin_adjustment' => 'Balance Adjustment',
+                                        default => str_replace('_', ' ', $transaction->type),
+                                    } }}
                                 </div>
                             </flux:table.cell>
                             <flux:table.cell

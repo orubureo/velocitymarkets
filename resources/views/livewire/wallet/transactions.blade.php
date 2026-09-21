@@ -13,7 +13,7 @@
             'trade_profit' => 'arrow-trending-up',
             'trade_loss' => 'arrow-trending-down',
             'copy_trade_profit', 'copy_trade_loss', 'copy_trade_allocation' => 'sparkles',
-            'referral_bonus' => 'gift',
+            'referral_bonus', 'bonus' => 'gift',
             'roi_payout' => 'rocket-launch',
             'investment_purchase' => 'briefcase',
             'admin_adjustment' => 'adjustments-horizontal',
@@ -22,6 +22,7 @@
 
         $typeLabel = fn (string $type) => match ($type) {
             'roi_payout' => 'ROI Payout',
+            'admin_adjustment' => 'Balance Adjustment',
             default => ucwords(str_replace('_', ' ', $type)),
         };
 
@@ -35,9 +36,10 @@
             'copy_trade_loss' => 'Copy Trade Loss',
             'copy_trade_allocation' => 'Copy Trade Allocation',
             'referral_bonus' => 'Referral Bonus',
+            'bonus' => 'Bonus',
             'roi_payout' => 'ROI Payout',
             'investment_purchase' => 'Investment Purchase',
-            'admin_adjustment' => 'Admin Adjustment',
+            'admin_adjustment' => 'Balance Adjustment',
         ];
         $filterIcon = fn (string $value) => $value === 'all' ? 'funnel' : $typeIcon($value);
     @endphp

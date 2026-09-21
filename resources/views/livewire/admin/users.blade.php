@@ -11,9 +11,9 @@
         <flux:table>
             <flux:table.columns class="bg-zinc-50 dark:bg-zinc-950">
                 <flux:table.column>User</flux:table.column>
-                <flux:table.column>Email</flux:table.column>
-                <flux:table.column>Country</flux:table.column>
-                <flux:table.column>Registered</flux:table.column>
+                <flux:table.column class="hidden md:table-cell">Email</flux:table.column>
+                <flux:table.column class="hidden md:table-cell">Country</flux:table.column>
+                <flux:table.column class="hidden md:table-cell">Registered</flux:table.column>
                 <flux:table.column>Manage</flux:table.column>
             </flux:table.columns>
 
@@ -26,9 +26,9 @@
                                 <div class="font-medium text-zinc-900 dark:text-white text-sm">{{ $user->name }}</div>
                             </div>
                         </flux:table.cell>
-                        <flux:table.cell class="text-zinc-500 text-sm">{{ $user->email }}</flux:table.cell>
-                        <flux:table.cell class="text-zinc-500 text-sm">{{ $user->country ?? '—' }}</flux:table.cell>
-                        <flux:table.cell class="text-zinc-500 text-sm">{{ $user->created_at->format('M j, Y') }}</flux:table.cell>
+                        <flux:table.cell class="text-zinc-500 text-sm hidden md:table-cell">{{ $user->email }}</flux:table.cell>
+                        <flux:table.cell class="text-zinc-500 text-sm hidden md:table-cell">{{ $user->country ?? '—' }}</flux:table.cell>
+                        <flux:table.cell class="text-zinc-500 text-sm hidden md:table-cell">{{ $user->created_at->format('M j, Y') }}</flux:table.cell>
                         <flux:table.cell>
                             <flux:button size="sm" variant="outline" icon="user" :href="route('admin.users.show', $user)" wire:navigate>
                                 Manage

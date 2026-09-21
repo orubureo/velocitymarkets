@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
         $this->call(AdminSeeder::class);
         $this->call(UserSeeder::class);
         $this->call(InvestmentPlanSeeder::class);
+        $this->call(AccountTierSeeder::class);
+        $this->call(SignalTierSeeder::class);
         $this->call(TraderSeeder::class);
     }
 }

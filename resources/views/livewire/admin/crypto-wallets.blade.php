@@ -1,44 +1,11 @@
 <div class="flex flex-col gap-6">
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between gap-3 flex-wrap">
         <div>
             <flux:heading size="xl" class="text-zinc-900 dark:text-white">Crypto Wallets</flux:heading>
             <flux:text class="text-zinc-500">Manage the deposit addresses shown to users.</flux:text>
         </div>
+        <flux:button variant="primary" icon="plus" wire:click="openCreateModal">Add Address</flux:button>
     </div>
-
-    {{-- Add Wallet Form --}}
-    <flux:card class="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-        <div class="flex items-center gap-3 mb-5">
-            <div class="stat-icon-brand">
-                <flux:icon name="plus-circle" class="size-5" />
-            </div>
-            <flux:heading size="md">Add Deposit Address</flux:heading>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <flux:select wire:model.live="currency" label="Currency">
-                <flux:select.option value="BTC">BTC</flux:select.option>
-                <flux:select.option value="ETH">ETH</flux:select.option>
-                <flux:select.option value="USDT">USDT</flux:select.option>
-                <flux:select.option value="SOL">SOL</flux:select.option>
-            </flux:select>
-            @if ($currency === 'USDT')
-                <flux:select wire:model="network" label="Network">
-                    <flux:select.option value="">Select network&hellip;</flux:select.option>
-                    <flux:select.option value="TRC20">TRC20</flux:select.option>
-                    <flux:select.option value="ERC20">ERC20</flux:select.option>
-                    <flux:select.option value="BEP20">BEP20</flux:select.option>
-                </flux:select>
-            @else
-                <div class="flex items-end">
-                    <flux:text size="sm" class="text-zinc-500 pb-2.5">{{ $currency }} uses a single address &mdash; no network needed.</flux:text>
-                </div>
-            @endif
-            <flux:input wire:model="address" label="Wallet Address" placeholder="0x... / bc1... / T..." class="sm:col-span-1" />
-        </div>
-        <div class="mt-4">
-            <flux:button variant="primary" icon="plus" wire:click="addWallet">Add Address</flux:button>
-        </div>
-    </flux:card>
 
     {{-- Wallets Table --}}
     <flux:card class="p-0 overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
@@ -52,7 +19,7 @@
             </flux:table.columns>
 
             <flux:table.rows>
-                @foreach ($wallets as $wallet)
+                @forelse ($wallets as $wallet)
                     <flux:table.row wire:key="wallet-{{ $wallet->id }}" class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
                         <flux:table.cell class="font-semibold text-zinc-900 dark:text-white">{{ $wallet->currency }}</flux:table.cell>
                         <flux:table.cell>{{ $wallet->network ?? '—' }}</flux:table.cell>
@@ -63,13 +30,78 @@
                             </flux:badge>
                         </flux:table.cell>
                         <flux:table.cell>
-                            <flux:button size="sm" variant="{{ $wallet->is_active ? 'outline' : 'primary' }}" icon="{{ $wallet->is_active ? 'pause' : 'play' }}" wire:click="toggleActive({{ $wallet->id }})">
-                                {{ $wallet->is_active ? 'Disable' : 'Enable' }}
-                            </flux:button>
+                            <div class="flex items-center gap-2">
+                                <flux:button size="sm" variant="{{ $wallet->is_active ? 'outline' : 'primary' }}" icon="{{ $wallet->is_active ? 'pause' : 'play' }}" wire:click="toggleActive({{ $wallet->id }})">
+                                    {{ $wallet->is_active ? 'Disable' : 'Enable' }}
+                                </flux:button>
+                                <flux:button size="sm" variant="outline" icon="pencil" wire:click="openEditModal({{ $wallet->id }})" aria-label="Edit {{ $wallet->currency }} address" />
+                                <flux:button size="sm" variant="danger" icon="trash" wire:click="confirmDelete({{ $wallet->id }})" aria-label="Delete {{ $wallet->currency }} address" />
+                            </div>
                         </flux:table.cell>
                     </flux:table.row>
-                @endforeach
+                @empty
+                    <flux:table.row>
+                        <flux:table.cell colspan="5" class="text-center text-zinc-500 py-10">No deposit addresses yet — add one to get started.</flux:table.cell>
+                    </flux:table.row>
+                @endforelse
             </flux:table.rows>
         </flux:table>
     </flux:card>
+
+    <flux:modal name="crypto-wallet-form-modal" class="max-w-md md:min-w-md" wire:model="showModal">
+        <div class="space-y-6">
+            <flux:heading size="lg">{{ $editingId ? 'Edit Deposit Address' : 'Add Deposit Address' }}</flux:heading>
+
+            <div class="grid grid-cols-1 gap-4">
+                <flux:select wire:model.live="currency" label="Currency">
+                    <flux:select.option value="BTC">BTC</flux:select.option>
+                    <flux:select.option value="ETH">ETH</flux:select.option>
+                    <flux:select.option value="USDT">USDT</flux:select.option>
+                    <flux:select.option value="SOL">SOL</flux:select.option>
+                </flux:select>
+                <flux:select wire:model="network" label="Network">
+                    <flux:select.option value="">Select network&hellip;</flux:select.option>
+                    @foreach ($networkOptions as $option)
+                        <flux:select.option value="{{ $option }}">{{ $option }}</flux:select.option>
+                    @endforeach
+                </flux:select>
+                <flux:input wire:model="address" label="Wallet Address" placeholder="0x... / bc1... / T..." />
+            </div>
+
+            <div class="flex gap-3 justify-end">
+                <flux:button variant="outline" wire:click="closeModal">Cancel</flux:button>
+                <flux:button variant="primary" wire:click="save" wire:loading.attr="disabled" wire:target="save">
+                    {{ $editingId ? 'Save Changes' : 'Add Address' }}
+                </flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
+    <flux:modal name="crypto-wallet-delete-modal" class="max-w-md md:min-w-md" wire:model="showDeleteModal">
+        <div class="space-y-6">
+            <div class="flex items-center gap-3">
+                <div class="stat-icon-down !rounded-full">
+                    <flux:icon name="exclamation-triangle" class="size-5" />
+                </div>
+                <flux:heading size="lg">Delete "{{ $deletingLabel }}"?</flux:heading>
+            </div>
+
+            <flux:callout variant="danger" icon="exclamation-triangle">
+                @if ($deletingDepositsCount > 0)
+                    <strong>{{ $deletingDepositsCount }}</strong> past deposit {{ Str::plural('record', $deletingDepositsCount) }} reference this address and will no longer resolve to a wallet once it's gone. This cannot be undone.
+                @else
+                    No deposit records reference this address, so this is safe to delete. This cannot be undone.
+                @endif
+            </flux:callout>
+
+            <flux:input wire:model.live="deleteConfirmation" label="Type DELETE to confirm" placeholder="DELETE" />
+
+            <div class="flex gap-3 justify-end">
+                <flux:button variant="outline" wire:click="closeDeleteModal">Cancel</flux:button>
+                <flux:button variant="danger" wire:click="deleteWallet" wire:loading.attr="disabled" wire:target="deleteWallet" :disabled="$deleteConfirmation !== 'DELETE'">
+                    Delete Permanently
+                </flux:button>
+            </div>
+        </div>
+    </flux:modal>
 </div>

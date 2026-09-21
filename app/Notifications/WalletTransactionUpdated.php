@@ -2,7 +2,9 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use App\Models\WalletTransaction;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class WalletTransactionUpdated extends Notification
@@ -17,7 +19,24 @@ class WalletTransactionUpdated extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', 'mail'];
+    }
+
+    public function toMail(User $notifiable): MailMessage
+    {
+        $type = $this->transaction->type === 'withdrawal' ? 'Withdrawal' : 'Deposit';
+        $approved = $this->transaction->status === 'approved';
+        $amount = number_format(abs((float) $this->transaction->amount), 2);
+
+        $mail = (new MailMessage)
+            ->subject("{$type} ".($approved ? 'Approved' : 'Rejected'))
+            ->greeting('Hi '.$notifiable->name.',');
+
+        return $approved
+            ? $mail->line("Your {$type} of \${$amount} has been approved and reflected in your balance.")
+                ->action('View Transactions', route('transactions'))
+            : $mail->line("Your {$type} of \${$amount} was rejected. Contact support if you have questions.")
+                ->action('Contact Support', route('support'));
     }
 
     /**

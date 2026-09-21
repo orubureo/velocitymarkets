@@ -1,7 +1,10 @@
 <div class="flex flex-col gap-6 stagger-children" x-data="{ stake: @entangle('stake'), balance: @js($balance ?? 0) }">
     <div>
-        <flux:heading size="xl">Trading</flux:heading>
-        <flux:text class="text-zinc-500 text-sm">Predict price direction and earn on correct calls.</flux:text>
+        <flux:link :href="route('trade')" wire:navigate class="inline-flex items-center gap-1 text-sm font-medium text-teal-500 mb-1">
+            <flux:icon name="chevron-left" class="size-3.5" /> All Markets
+        </flux:link>
+        <flux:heading size="xl">Predict {{ $currentMarket->display_name ?? $asset }}</flux:heading>
+        <flux:text class="text-zinc-500 text-sm">Choose Rise or Fall and lock in your stake before it expires.</flux:text>
     </div>
 
     @if (session('status'))
@@ -14,6 +17,7 @@
             $market = $markets->firstWhere('symbol', $symbol);
             return $market ? ($marketIcons[$market->coingecko_id] ?? null) : null;
         };
+        $currentMarket = $markets->firstWhere('symbol', $asset);
     @endphp
 
     <div class="flex flex-col md:flex-row gap-6 items-start w-full">
@@ -99,54 +103,13 @@
         {{-- Right Column: Chart and Trades (2/3 width) --}}
         <div class="w-full md:w-2/3 flex flex-col gap-6">
             {{-- Asset Header --}}
-            @php $currentMarket = $markets->firstWhere('symbol', $asset); @endphp
             <flux:card class="trading-card flex items-center justify-between !py-4">
-                <div class="flex items-center gap-3 min-w-0" x-data="{
-                        open: false,
-                        search: '',
-                        panelStyle: '',
-                        openPanel() {
-                            const r = this.$refs.trigger.getBoundingClientRect();
-                            this.panelStyle = `top:${r.bottom + 8}px; left:${Math.min(r.left, window.innerWidth - 336)}px;`;
-                            this.open = true;
-                            this.$nextTick(() => this.$refs.marketSearch?.focus());
-                        }
-                    }" @keydown.escape.window="open = false">
+                <div class="flex items-center gap-3 min-w-0">
                     <x-crypto-icon :currency="$baseCurrency($asset)" :url="$iconFor($asset)" class="size-10 shrink-0" />
                     <div class="min-w-0">
-                        <button type="button" x-ref="trigger" @click="open ? (open = false) : openPanel()"
-                            class="group flex items-center gap-1.5 font-bold text-lg text-zinc-900 dark:text-white cursor-pointer">
-                            {{ $currentMarket->display_name ?? $asset }}
-                            <flux:icon name="chevron-down" class="size-4 text-zinc-400 transition-transform duration-200" x-bind:class="open ? 'rotate-180' : ''" />
-                        </button>
-                        <flux:text class="text-xs text-zinc-500 -mt-1 block">Tap to change pair</flux:text>
+                        <div class="font-bold text-lg text-zinc-900 dark:text-white truncate">{{ $currentMarket->display_name ?? $asset }}</div>
+                        <flux:text class="text-xs text-zinc-500 -mt-1 block">{{ $asset }}</flux:text>
                     </div>
-
-                    <template x-teleport="body">
-                        <div x-show="open" x-cloak x-transition @click.outside="open = false"
-                            x-bind:style="panelStyle"
-                            class="fixed z-50 w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl shadow-zinc-900/20 overflow-hidden">
-                            <div class="p-2.5 border-b border-zinc-100 dark:border-zinc-800">
-                                <flux:input x-ref="marketSearch" x-model="search" icon="magnifying-glass" size="sm" placeholder="Search markets…" />
-                            </div>
-                            <div class="max-h-80 overflow-y-auto py-1.5">
-                                @foreach ($markets as $market)
-                                    @php $haystack = strtolower($market->display_name.' '.$market->symbol); @endphp
-                                    <button type="button"
-                                        wire:click="$set('asset', '{{ $market->symbol }}')"
-                                        @click="open = false; search = ''"
-                                        x-show="search === '' || {{ Illuminate\Support\Js::from($haystack) }}.includes(search.toLowerCase())"
-                                        class="w-full flex items-center gap-2.5 px-3 py-2 text-left transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800 {{ $asset === $market->symbol ? 'bg-teal-500/5' : '' }}">
-                                        <x-crypto-icon :currency="$baseCurrency($market->symbol)" :url="$marketIcons[$market->coingecko_id] ?? null" class="size-7 shrink-0" />
-                                        <span class="text-sm font-medium text-zinc-800 dark:text-zinc-100 truncate">{{ $market->display_name }}</span>
-                                        @if ($asset === $market->symbol)
-                                            <flux:icon name="check" class="size-4 text-teal-500 ml-auto shrink-0" />
-                                        @endif
-                                    </button>
-                                @endforeach
-                            </div>
-                        </div>
-                    </template>
                 </div>
                 <div class="text-right shrink-0">
                     <div class="text-xl font-mono font-bold text-zinc-900 dark:text-white">${{ number_format($currentPrice, 4) }}</div>
@@ -158,9 +121,38 @@
             <flux:card class="trading-card !p-0 overflow-hidden">
                 <div wire:ignore x-data="{
                     symbol: @js($tradingViewSymbol ?? 'BINANCE:BTCUSDT'),
+                    tvFailed: false,
                     initWidget(sym, dark) {
+                        // `tvGen`/`tvAttempts` are deliberately plain properties on $el, NOT
+                        // reactive x-data state: this function runs synchronously inside
+                        // `x-effect`, and Alpine tracks every reactive property READ during
+                        // that synchronous run as a dependency of the effect. A read-then-
+                        // write like `++this.tvGen` on a REACTIVE property would both read
+                        // it (registering it as a dependency) and write it (triggering the
+                        // effect to re-run) in the same tick — an infinite self-triggering
+                        // loop that re-creates the TradingView widget hundreds of times a
+                        // second and never lets it settle (this is almost certainly why the
+                        // chart failed to render at all on a slower mobile device). Keeping
+                        // the counters off the reactive proxy avoids that entirely; `tvFailed`
+                        // stays reactive since it's the only thing driving the UI (x-show).
+                        this.$el._tvGen = (this.$el._tvGen || 0) + 1;
+                        const gen = this.$el._tvGen;
+                        this.$el._tvAttempts = 0;
+                        this.tvFailed = false;
+                        this.tryInitWidget(sym, dark, gen);
+                    },
+                    tryInitWidget(sym, dark, gen) {
+                        if (gen !== this.$el._tvGen) return;
                         if (typeof TradingView === 'undefined') {
-                            setTimeout(() => this.initWidget(sym, dark), 100);
+                            // s3.tradingview.com is commonly blocked by ad-blockers/network
+                            // filters (especially on mobile) — stop polling after ~6s and
+                            // show a fallback instead of an indefinitely blank chart.
+                            this.$el._tvAttempts++;
+                            if (this.$el._tvAttempts > 60) {
+                                this.tvFailed = true;
+                                return;
+                            }
+                            setTimeout(() => this.tryInitWidget(sym, dark, gen), 100);
                             return;
                         }
                         const el = document.getElementById('tv_chart_container');
@@ -183,8 +175,13 @@
                     }
                 }" x-init="
                     window.addEventListener('tv-symbol-changed', (e) => { symbol = e.detail.symbol; });
-                " x-effect="initWidget(symbol, ($flux.appearance === 'dark' || ($flux.appearance === 'system' && $flux.dark)))" class="h-[450px] w-full">
-                    <div id="tv_chart_container" class="h-full w-full"></div>
+                " x-effect="initWidget(symbol, ($flux.appearance === 'dark' || ($flux.appearance === 'system' && $flux.dark)))" class="h-[450px] w-full relative">
+                    <div id="tv_chart_container" class="h-full w-full" x-show="!tvFailed"></div>
+                    <div x-show="tvFailed" x-cloak class="h-full w-full flex flex-col items-center justify-center gap-2 text-center px-6 bg-zinc-50 dark:bg-zinc-950/60">
+                        <flux:icon name="chart-bar-square" class="size-8 text-zinc-300 dark:text-zinc-700" />
+                        <flux:text class="text-zinc-500">Live chart unavailable right now.</flux:text>
+                        <flux:text size="sm" class="text-zinc-400">Current price: ${{ number_format($currentPrice, 4) }}</flux:text>
+                    </div>
                 </div>
             </flux:card>
 
@@ -236,15 +233,27 @@
                                             {{ $trade->asset }}
                                             <flux:badge size="sm" color="{{ $trade->direction === 'rise' ? 'lime' : 'red' }}">{{ strtoupper($trade->direction) }}</flux:badge>
                                         </div>
-                                        <div class="text-xs text-zinc-500">${{ number_format($trade->entry_price, 4) }} &rarr; ${{ number_format($trade->exit_price, 4) }}</div>
+                                        <div class="text-xs text-zinc-500">
+                                            @if ($trade->status === 'voided')
+                                                Market unavailable at settlement
+                                            @else
+                                                ${{ number_format($trade->entry_price, 4) }} &rarr; ${{ number_format($trade->exit_price, 4) }}
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <flux:badge size="sm" color="{{ $trade->status === 'won' ? 'emerald' : 'red' }}" class="mb-1">
+                                    <flux:badge size="sm" color="{{ $trade->status === 'won' ? 'emerald' : ($trade->status === 'voided' ? 'zinc' : 'red') }}" class="mb-1">
                                         {{ ucfirst($trade->status) }}
                                     </flux:badge>
-                                    <div class="font-mono font-bold text-sm {{ $trade->status === 'won' ? 'text-green-500' : 'text-red-500' }}">
-                                        {{ $trade->status === 'won' ? '+$' . number_format($trade->payout, 2) : '-$' . number_format($trade->stake, 2) }}
+                                    <div class="font-mono font-bold text-sm {{ $trade->status === 'won' ? 'text-green-500' : ($trade->status === 'voided' ? 'text-zinc-500' : 'text-red-500') }}">
+                                        @if ($trade->status === 'won')
+                                            +${{ number_format($trade->payout, 2) }}
+                                        @elseif ($trade->status === 'voided')
+                                            ${{ number_format($trade->stake, 2) }} refunded
+                                        @else
+                                            -${{ number_format($trade->stake, 2) }}
+                                        @endif
                                     </div>
                                 </div>
                             </flux:card>

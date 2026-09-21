@@ -25,7 +25,7 @@
         };
     @endphp
 
-    {{-- Step 1: choose currency, then network only for USDT --}}
+    {{-- Step 1: choose currency, then network for any currency with more than one configured --}}
     @if ($step === 1 && ! $awaitingNetwork)
         <flux:card class="trading-card flex flex-col gap-5">
             <div class="flex items-center gap-3">
@@ -49,7 +49,7 @@
                         <div class="min-w-0">
                             <div class="font-semibold text-zinc-900 dark:text-white">{{ $currencyOption }}</div>
                             <div class="text-xs text-zinc-500 truncate">
-                                {{ $currencyOption === 'USDT' ? 'Choose a network' : 'Single address' }}
+                                {{ $multiNetworkCurrencies->contains($currencyOption) ? 'Choose a network' : 'Single address' }}
                             </div>
                         </div>
                         <flux:icon name="chevron-right" class="size-4 text-zinc-300 dark:text-zinc-600 ml-auto shrink-0 transition-transform duration-200 group-hover:translate-x-0.5" />
@@ -63,16 +63,16 @@
         </flux:card>
     @endif
 
-    {{-- Step 1b: USDT network sub-choice --}}
+    {{-- Step 1b: network sub-choice, for whichever currency has more than one configured --}}
     @if ($step === 1 && $awaitingNetwork)
         <flux:card class="trading-card flex flex-col gap-4">
             <div class="flex items-center gap-2">
-                <flux:badge size="sm" color="teal">USDT</flux:badge>
+                <flux:badge size="sm" color="{{ $this->currencyColor() }}">{{ $currency }}</flux:badge>
                 <flux:text class="text-zinc-500">Choose the network you'll send from.</flux:text>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                @forelse ($usdtNetworks as $networkOption)
+                @forelse ($availableNetworks as $networkOption)
                     <button
                         type="button"
                         wire:click="selectNetwork('{{ $networkOption }}')"
@@ -82,7 +82,7 @@
                     </button>
                 @empty
                     <div class="sm:col-span-3 text-center py-8 text-zinc-500">
-                        No USDT networks are configured yet. Please check back later.
+                        No {{ $currency }} networks are configured yet. Please check back later.
                     </div>
                 @endforelse
             </div>

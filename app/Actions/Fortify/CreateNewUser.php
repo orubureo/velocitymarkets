@@ -5,6 +5,7 @@ namespace App\Actions\Fortify;
 use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
 use App\Models\User;
+use App\Notifications\WelcomeNotification;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
@@ -31,7 +32,7 @@ class CreateNewUser implements CreatesNewUsers
             ? User::where('referral_code', $input['ref'])->first()
             : null;
 
-        return User::create([
+        $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'phone' => $input['phone'],
@@ -39,5 +40,9 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $input['password'],
             'referred_by' => $referrer?->id,
         ]);
+
+        $user->notify(new WelcomeNotification);
+
+        return $user;
     }
 }

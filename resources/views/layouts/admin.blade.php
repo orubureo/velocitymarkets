@@ -16,6 +16,9 @@
             ['icon' => 'arrow-up-tray', 'route' => 'admin.withdrawals', 'label' => __('Withdrawals')],
             ['icon' => 'chart-bar', 'route' => 'admin.markets', 'label' => __('Markets')],
             ['icon' => 'briefcase', 'route' => 'admin.investment-plans', 'label' => __('Investment Plans')],
+            ['icon' => 'star', 'route' => 'admin.account-tiers', 'label' => __('Account Tiers')],
+            ['icon' => 'bolt', 'route' => 'admin.signal-tiers', 'label' => __('Signal Tiers')],
+            ['icon' => 'signal', 'route' => 'admin.signals', 'label' => __('Signals')],
             ['icon' => 'user-group', 'route' => 'admin.traders', 'label' => __('Copy Experts')],
             ['icon' => 'wallet', 'route' => 'admin.crypto-wallets', 'label' => __('Crypto Wallets')],
             ['icon' => 'chart-pie', 'route' => 'admin.investments', 'label' => __('Investments')],
@@ -65,9 +68,14 @@
         </div>
     </div>
 
-    {{-- Mobile sidebar (Flux handles the drawer/backdrop behavior) --}}
-    <flux:sidebar sticky collapsible="mobile"
-        class="lg:hidden border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+    {{-- Mobile sidebar (Flux handles the drawer/backdrop behavior). Deliberately
+         no `sticky` prop — that scrolls the WHOLE sidebar (header + nav + theme
+         switcher) as one unit once it overflows. Instead the sidebar is a
+         fixed-height flex column (overflow-hidden) with only the middle nav
+         block scrolling, matching the desktop sidebar: logo pinned at top,
+         links scroll in between, theme switcher pinned at the bottom. --}}
+    <flux:sidebar collapsible="mobile"
+        class="lg:hidden max-h-dvh overflow-hidden border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
         <flux:sidebar.header>
             <a href="{{ route('admin.dashboard') }}" wire:navigate class="flex items-center gap-2 min-w-0">
                 <flux:icon name="shield-check" class="size-5 text-accent shrink-0" />
@@ -76,6 +84,7 @@
             <flux:sidebar.collapse class="lg:hidden" />
         </flux:sidebar.header>
 
+        <div class="flex-1 min-h-0 overflow-y-auto overscroll-contain">
         <flux:sidebar.nav>
             <div class="grid gap-0.5">
                 @foreach ($adminNavItems as $item)
@@ -92,8 +101,7 @@
                 @endforeach
             </div>
         </flux:sidebar.nav>
-
-        <flux:spacer />
+        </div>
 
         <flux:sidebar.nav>
             <flux:radio.group x-data variant="segmented" x-model="$flux.appearance">
@@ -256,7 +264,7 @@
         </div>
 
         {{-- Mobile dock --}}
-        <div class="fixed bottom-0 left-0 z-20 w-full h-16 bg-white border-t border-zinc-200 dark:bg-zinc-900 dark:border-zinc-800 lg:hidden pb-safe">
+        <div class="fixed bottom-0 left-0 z-10 w-full h-16 bg-white border-t border-zinc-200 dark:bg-zinc-900 dark:border-zinc-800 lg:hidden pb-safe">
             <div class="grid h-full max-w-lg grid-cols-5 mx-auto font-medium">
                 <a href="{{ route('admin.dashboard') }}" wire:navigate class="inline-flex flex-col items-center justify-center px-2 hover:bg-zinc-50 dark:hover:bg-zinc-800 group {{ request()->routeIs('admin.dashboard') ? 'text-accent' : 'text-zinc-500 dark:text-zinc-400' }}">
                     <flux:icon name="squares-2x2" variant="{{ request()->routeIs('admin.dashboard') ? 'solid' : 'outline' }}" class="size-6 mb-1" />

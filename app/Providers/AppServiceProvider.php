@@ -5,8 +5,11 @@ namespace App\Providers;
 use App\Models\User;
 use App\Models\Wallet;
 use Carbon\CarbonImmutable;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
@@ -33,6 +36,8 @@ class AppServiceProvider extends ServiceProvider
         User::created(function (User $user) {
             Wallet::create(['user_id' => $user->id, 'balance' => 0]);
         });
+
+        Event::listen(Registered::class, SendEmailVerificationNotification::class);
     }
 
     /**

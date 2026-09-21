@@ -59,7 +59,7 @@ class PriceService
      * get every supported market.
      *
      * @param  array<int, string>  $symbols
-     * @return array<int, array{symbol: string, display_name: string, price: int|float, change_pct: int|float|null, image: string|null}>
+     * @return array<int, array{symbol: string, display_name: string, price: int|float, change_pct: int|float|null, image: string|null, market_cap: int|float|null}>
      */
     public function tickerMarkets(array $symbols = []): array
     {
@@ -83,6 +83,7 @@ class PriceService
                     'price' => $snapshot['price'],
                     'change_pct' => $snapshot['change_pct'],
                     'image' => $snapshot['image'],
+                    'market_cap' => $snapshot['market_cap'],
                 ];
             })
             ->filter()
@@ -95,7 +96,7 @@ class PriceService
      * single request, keyed by coingecko_id. Cached briefly so price/change stay
      * reasonably live without hammering the API on every request.
      *
-     * @return array<int, array{id: string, image: string|null, price: int|float|null, change_pct: int|float|null}>
+     * @return array<int, array{id: string, image: string|null, price: int|float|null, change_pct: int|float|null, market_cap: int|float|null}>
      */
     protected function marketSnapshots(): array
     {
@@ -123,6 +124,7 @@ class PriceService
                         'image' => $coin['image'] ?? null,
                         'price' => $coin['current_price'] ?? null,
                         'change_pct' => $coin['price_change_percentage_24h'] ?? null,
+                        'market_cap' => $coin['market_cap'] ?? null,
                     ])
                     ->all();
             } catch (ConnectionException $e) {

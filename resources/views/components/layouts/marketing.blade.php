@@ -33,11 +33,11 @@
     <style>
         .brand-logo {
             display: block;
-            height: 32px;
+            height: 42px;
             width: auto;
         }
         .mobile-drawer-logo .brand-logo {
-            height: 36px;
+            height: 40px;
         }
 
         /* Single-row header on desktop: logo, nav links and sign-in/register together.
@@ -121,6 +121,22 @@
                 align-items: center;
                 justify-content: flex-end;
             }
+            /* Let the logo and CTA columns size to their own content instead
+               of Bootstrap's fixed 2/7/3 column split, so the nav column
+               (flex: 1 above) fills the true remaining space and its centered
+               links land at the actual midpoint between logo and buttons. */
+            .header-row-inline > .main-logo {
+                flex: 0 0 auto;
+                width: auto;
+            }
+            .header-row-inline > .col-xs-12.col-md-7 {
+                flex: 1 1 auto;
+                width: auto;
+            }
+            .header-row-inline > .col-xs-6.col-md-3 {
+                flex: 0 0 auto;
+                width: auto;
+            }
         }
 
         @media (max-width: 767px) {
@@ -150,6 +166,9 @@
                 width: auto;
                 flex: 0 0 auto;
             }
+            .main-logo .brand-logo {
+                height: 48px;
+            }
             .navbar-collapse {
                 display: none !important;
             }
@@ -175,9 +194,22 @@
             }
         }
 
-        /* Ghost sign-in button */
+        /* Ghost sign-in button. The leading icon skews plain text-align:center
+           text off visual-center (the eye reads the "sign in" label, but the
+           icon+label pair as a whole is what's actually centered) — balanced
+           here with a matching invisible spacer after the label so the label
+           itself sits at true center. */
         ul.user li.sign-in a.btn-primary {
             border: 1px solid #fd961a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        ul.user li.sign-in a.btn-primary::after {
+            content: "";
+            width: 9px;
+            flex-shrink: 0;
         }
         ul.user li.sign-in a.btn-primary:hover {
             background: #fd961a;
@@ -323,8 +355,22 @@
         .hero-cta { margin-top: 8px; }
         .hero-cta-row { display: flex; gap: 10px; }
         .hero-cta-row .btn { flex: 1; text-align: center; }
+        /* The trailing chevron skews plain text-align:center text off
+           visual-center the same way the nav's leading icon does — balanced
+           with a matching invisible spacer before the label. */
+        .hero-cta-row .btn-ghost-orange {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .hero-cta-row .btn-ghost-orange::before {
+            content: "";
+            width: 5px;
+            flex-shrink: 0;
+        }
         .hero-cta-row .btn-ghost-orange .fa {
-            margin-left: 4px;
+            margin-left: 0;
         }
 
         /* Hero content: left-aligned badge + headline + lead copy + stat row +
@@ -433,12 +479,14 @@
                 font-size: 22px;
             }
             /* Stack the CTA buttons full-width instead of side by side, and
-               drop the trailing chevron — it skewed the "Sign In" text off
-               visual-center even though it was text-align:center. */
+               drop the trailing chevron (and its balancing spacer, now that
+               centering is handled via the flex+spacer rule above — an
+               unmatched spacer alone would skew the label the other way). */
             .hero-cta-row {
                 flex-direction: column;
             }
-            .hero-cta-row .btn-ghost-orange .fa {
+            .hero-cta-row .btn-ghost-orange .fa,
+            .hero-cta-row .btn-ghost-orange::before {
                 display: none;
             }
         }
@@ -588,10 +636,8 @@
                                 <ul>
                                     <li><a href="{{ route('faq') }}">FAQ</a></li>
                                     <li><a href="{{ route('terms') }}">Terms of Services</a></li>
-                                    <li><a href="#">404</a></li>
                                     <li><a href="{{ route('register') }}">Register</a></li>
                                     <li><a href="{{ route('login') }}">Login</a></li>
-                                    <li><a href="#">Coming Soon</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -670,7 +716,7 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <!-- Copyright Text Starts -->
-                            <p class="text-center">Copyright &copy; {{ date('Y') }} VelocityMarkets All Rights Reserved | Design adapted from a template by <a href="https://themeforest.net/user/celtano" target="_blank">celtano</a></p>
+                            <p class="text-center">Copyright &copy; {{ date('Y') }} VelocityMarkets All Rights Reserved</p>
                             <!-- Copyright Text Ends -->
                         </div>
                     </div>

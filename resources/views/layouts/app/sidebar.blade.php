@@ -112,16 +112,16 @@
             <flux:separator x-show="collapsed" class="my-2" />
 
             <a href="{{ route('trade') }}" wire:navigate
-                x-bind:title="collapsed ? '{{ __('Trade') }}' : ''"
+                x-bind:title="collapsed ? '{{ __('Markets & Trading') }}' : ''"
                 class="group relative flex items-center gap-3.5 px-3 py-3 rounded-xl text-base font-bold transition-all duration-200 hover:translate-x-0.5 whitespace-nowrap
-                    {{ request()->routeIs('trade') ? 'bg-teal-500/10 text-teal-700 dark:text-teal-400' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 hover:text-zinc-900 dark:hover:text-zinc-50' }}">
-                <span x-show="{{ request()->routeIs('trade') ? 'true' : 'false' }}"
+                    {{ request()->routeIs('trade*') ? 'bg-teal-500/10 text-teal-700 dark:text-teal-400' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 hover:text-zinc-900 dark:hover:text-zinc-50' }}">
+                <span x-show="{{ request()->routeIs('trade*') ? 'true' : 'false' }}"
                     class="nav-indicator absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-teal-500 animate-glow-pulse"></span>
-                <flux:icon name="chart-bar-square" variant="{{ request()->routeIs('trade') ? 'solid' : 'outline' }}" class="size-6 shrink-0 transition-transform duration-200 group-hover:scale-110" />
+                <flux:icon name="chart-bar-square" variant="{{ request()->routeIs('trade*') ? 'solid' : 'outline' }}" class="size-6 shrink-0 transition-transform duration-200 group-hover:scale-110" />
                 <span x-show="!collapsed" x-transition:enter="transition-opacity duration-150 delay-100"
                     x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
                     x-transition:leave="transition-opacity duration-75" x-transition:leave-end="opacity-0">
-                    {{ __('Trade') }}
+                    {{ __('Markets & Trading') }}
                 </span>
             </a>
 
@@ -150,6 +150,34 @@
                     x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
                     x-transition:leave="transition-opacity duration-75" x-transition:leave-end="opacity-0">
                     {{ __('Investment Plans') }}
+                </span>
+            </a>
+
+            <a href="{{ route('upgrade-account') }}" wire:navigate
+                x-bind:title="collapsed ? '{{ __('Account Upgrade') }}' : ''"
+                class="group relative flex items-center gap-3.5 px-3 py-3 rounded-xl text-base font-bold transition-all duration-200 hover:translate-x-0.5 whitespace-nowrap
+                    {{ request()->routeIs('upgrade-account') ? 'bg-teal-500/10 text-teal-700 dark:text-teal-400' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 hover:text-zinc-900 dark:hover:text-zinc-50' }}">
+                <span x-show="{{ request()->routeIs('upgrade-account') ? 'true' : 'false' }}"
+                    class="nav-indicator absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-teal-500 animate-glow-pulse"></span>
+                <flux:icon name="star" variant="{{ request()->routeIs('upgrade-account') ? 'solid' : 'outline' }}" class="size-6 shrink-0 transition-transform duration-200 group-hover:scale-110" />
+                <span x-show="!collapsed" x-transition:enter="transition-opacity duration-150 delay-100"
+                    x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                    x-transition:leave="transition-opacity duration-75" x-transition:leave-end="opacity-0">
+                    {{ __('Account Upgrade') }}
+                </span>
+            </a>
+
+            <a href="{{ route('buy-signal') }}" wire:navigate
+                x-bind:title="collapsed ? '{{ __('Buy Signal') }}' : ''"
+                class="group relative flex items-center gap-3.5 px-3 py-3 rounded-xl text-base font-bold transition-all duration-200 hover:translate-x-0.5 whitespace-nowrap
+                    {{ request()->routeIs('buy-signal') ? 'bg-teal-500/10 text-teal-700 dark:text-teal-400' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 hover:text-zinc-900 dark:hover:text-zinc-50' }}">
+                <span x-show="{{ request()->routeIs('buy-signal') ? 'true' : 'false' }}"
+                    class="nav-indicator absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-teal-500 animate-glow-pulse"></span>
+                <flux:icon name="bolt" variant="{{ request()->routeIs('buy-signal') ? 'solid' : 'outline' }}" class="size-6 shrink-0 transition-transform duration-200 group-hover:scale-110" />
+                <span x-show="!collapsed" x-transition:enter="transition-opacity duration-150 delay-100"
+                    x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                    x-transition:leave="transition-opacity duration-75" x-transition:leave-end="opacity-0">
+                    {{ __('Buy Signal') }}
                 </span>
             </a>
 
@@ -207,6 +235,7 @@
         {{-- Bottom: Notifications, theme switcher, account --}}
         <div class="shrink-0 border-t border-zinc-200 dark:border-zinc-800 p-3 flex flex-col gap-3 bg-zinc-50/60 dark:bg-zinc-950/40">
             <div x-show="!collapsed" class="flex items-center gap-2">
+                <livewire:notifications-bell />
                 <flux:radio.group x-data variant="segmented" x-model="$flux.appearance" class="flex-1">
                     <flux:radio value="light" icon="sun" aria-label="Light" title="Light" />
                     <flux:radio value="dark" icon="moon" aria-label="Dark" title="Dark" />
@@ -214,6 +243,7 @@
                 </flux:radio.group>
             </div>
             <div x-show="collapsed" x-data class="flex flex-col items-center gap-2">
+                <livewire:notifications-bell variant="compact" />
                 <flux:button size="sm" variant="ghost" icon="sun" x-show="$flux.appearance === 'light'"
                     x-on:click="$flux.appearance = 'dark'" title="Switch to dark" />
                 <flux:button size="sm" variant="ghost" icon="moon" x-show="$flux.appearance !== 'light'"
@@ -260,14 +290,20 @@
         </button>
     </div>
 
-    {{-- Mobile sidebar (Flux handles this) --}}
-    <flux:sidebar sticky collapsible="mobile"
-        class="lg:hidden border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+    {{-- Mobile sidebar (Flux handles this). Deliberately no `sticky` prop —
+         that makes Flux scroll the WHOLE sidebar (header + nav + account) as
+         one unit once it overflows. Instead the sidebar itself is a fixed-
+         height flex column (overflow-hidden) with only the middle nav block
+         scrolling, matching the desktop sidebar: logo pinned at top, links
+         scroll in between, account/sign-out pinned at the bottom. --}}
+    <flux:sidebar collapsible="mobile"
+        class="lg:hidden max-h-dvh overflow-hidden border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
         <flux:sidebar.header>
             <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
             <flux:sidebar.collapse class="lg:hidden" />
         </flux:sidebar.header>
 
+        <div class="flex-1 min-h-0 overflow-y-auto overscroll-contain flex flex-col gap-4">
         <flux:sidebar.nav>
             @php
                 $mobileNavGroups = [
@@ -280,9 +316,11 @@
                         ['icon' => 'clock', 'route' => 'transactions', 'label' => __('Transactions')],
                     ],
                     __('Investing') => [
-                        ['icon' => 'chart-bar-square', 'route' => 'trade', 'label' => __('Trade')],
+                        ['icon' => 'chart-bar-square', 'route' => 'trade', 'label' => __('Markets & Trading'), 'activePattern' => 'trade*'],
                         ['icon' => 'sparkles', 'route' => 'copy-trading', 'label' => __('Copy Trading')],
                         ['icon' => 'briefcase', 'route' => 'investment.plans', 'label' => __('Investment Plans')],
+                        ['icon' => 'star', 'route' => 'upgrade-account', 'label' => __('Account Upgrade')],
+                        ['icon' => 'bolt', 'route' => 'buy-signal', 'label' => __('Buy Signal')],
                     ],
                     __('Services') => [
                         ['icon' => 'user-group', 'route' => 'referral', 'label' => __('Referral')],
@@ -295,7 +333,7 @@
             @foreach ($mobileNavGroups as $heading => $items)
                 <flux:sidebar.group :heading="$heading" class="grid gap-0.5">
                     @foreach ($items as $item)
-                        @php $isCurrent = request()->routeIs($item['route']); @endphp
+                        @php $isCurrent = request()->routeIs($item['activePattern'] ?? $item['route']); @endphp
                         <a href="{{ route($item['route']) }}" wire:navigate
                             class="group relative flex items-center gap-3.5 px-3 py-3 rounded-xl text-base font-bold transition-all duration-200 whitespace-nowrap
                                 {{ $isCurrent ? 'bg-teal-500/10 text-teal-700 dark:text-teal-400' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 hover:text-zinc-900 dark:hover:text-zinc-50' }}">
@@ -309,8 +347,7 @@
                 </flux:sidebar.group>
             @endforeach
         </flux:sidebar.nav>
-
-        <flux:spacer />
+        </div>
 
         <flux:sidebar.nav>
             <flux:radio.group x-data variant="segmented" x-model="$flux.appearance">
@@ -364,16 +401,34 @@
         </a>
 
         <div class="flex-1 flex items-center justify-end">
-            {{-- reserved --}}
+            <livewire:notifications-bell variant="compact" />
         </div>
     </div>
 
-    @if (request()->routeIs('dashboard'))
+    @if (session()->has('impersonating_admin_id'))
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-2 px-4 py-2 bg-amber-500 text-white text-sm font-medium">
+            <div class="flex items-center gap-2">
+                <flux:icon name="eye" class="size-4 shrink-0" />
+                <span>Viewing as {{ auth()->user()->name }} — logged in by {{ session('impersonating_admin_name') }}</span>
+            </div>
+            <form method="POST" action="{{ route('impersonate.stop') }}">
+                @csrf
+                <button type="submit" class="inline-flex items-center gap-1.5 rounded-lg bg-white/20 hover:bg-white/30 px-3 py-1 transition-colors">
+                    <flux:icon name="arrow-uturn-left" class="size-3.5" />
+                    Return to Admin
+                </button>
+            </form>
+        </div>
+    @endif
+
+    @if (request()->routeIs('dashboard') || request()->routeIs('trade'))
         {{-- Market ticker: sticky so it stays pinned at the top of the actual
              window scroll (this page has no isolated inner scroll container),
              offset below the mobile top bar (h-14) so the two don't overlap.
              The component tries TradingView's live widget first and falls
-             back to our own real-price ticker if it's blocked/fails to load. --}}
+             back to our own real-price ticker if it's blocked/fails to load.
+             Scoped to `trade` (the markets list) only, not `trade.show` — the
+             focused per-pair page already has its own chart/price display. --}}
         <livewire:market-ticker />
     @endif
 

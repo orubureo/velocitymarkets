@@ -13,13 +13,22 @@ use Livewire\Component;
 #[Title('Trade')]
 class Place extends Component
 {
-    public string $asset = 'BTCUSDT';
+    public string $asset;
 
     public string $stake = '';
 
     public int $expiryMinutes = 5;
 
     public string $positionsTab = 'active';
+
+    public function mount(string $symbol, PriceService $prices): void
+    {
+        $symbol = strtoupper($symbol);
+
+        abort_unless($prices->supportedMarkets()->contains('symbol', $symbol), 404);
+
+        $this->asset = $symbol;
+    }
 
     public function placeTrade(string $direction, PriceService $prices): void
     {
@@ -72,14 +81,8 @@ class Place extends Component
             'marketIcons' => $prices->marketIcons(),
             'tradingViewSymbol' => $currentMarket->tradingview_symbol ?? 'BINANCE:BTCUSDT',
             'openTrades' => Trade::where('user_id', Auth::id())->where('status', 'open')->latest()->get(),
-            'closedTrades' => Trade::where('user_id', Auth::id())->whereIn('status', ['won', 'lost'])->latest('settled_at')->take(15)->get(),
+            'closedTrades' => Trade::where('user_id', Auth::id())->whereIn('status', ['won', 'lost', 'voided'])->latest('settled_at')->take(15)->get(),
             'balance' => Auth::guard('web')->user()->wallet->balance,
         ]);
-    }
-
-    public function updatedAsset(PriceService $prices): void
-    {
-        $market = $prices->supportedMarkets()->firstWhere('symbol', $this->asset);
-        $this->dispatch('tv-symbol-changed', symbol: $market->tradingview_symbol ?? 'BINANCE:BTCUSDT');
     }
 }

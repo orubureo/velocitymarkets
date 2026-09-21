@@ -71,6 +71,12 @@ class Withdraw extends Component
 
     public function submit(): void
     {
+        if (Auth::guard('web')->user()->withdrawals_paused) {
+            session()->flash('error', 'Withdrawals are currently paused for your account. Please contact support.');
+
+            return;
+        }
+
         $wallet = Auth::guard('web')->user()->wallet;
 
         $this->validateAmountAndDestination();
@@ -143,6 +149,7 @@ class Withdraw extends Component
         return view('livewire.wallet.withdraw', [
             'balance' => Auth::guard('web')->user()->wallet->balance,
             'cryptoCurrencies' => self::CRYPTO_CURRENCIES,
+            'withdrawalsPaused' => Auth::guard('web')->user()->withdrawals_paused,
         ]);
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -55,9 +55,13 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
     'eth_address',
     'ltc_address',
     'usdt_address',
+    'account_tier_id',
+    'account_tier_purchased_at',
+    'is_blocked',
+    'withdrawals_paused',
 ])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
-class User extends Authenticatable implements PasskeyUser
+class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
@@ -74,6 +78,9 @@ class User extends Authenticatable implements PasskeyUser
             'password' => 'hashed',
             'kyc_submitted_at' => 'datetime',
             'kyc_reviewed_at' => 'datetime',
+            'account_tier_purchased_at' => 'datetime',
+            'is_blocked' => 'boolean',
+            'withdrawals_paused' => 'boolean',
         ];
     }
 
@@ -119,5 +126,21 @@ class User extends Authenticatable implements PasskeyUser
     public function supportTickets(): HasMany
     {
         return $this->hasMany(SupportTicket::class);
+    }
+
+    /**
+     * @return BelongsTo<AccountTier, $this>
+     */
+    public function accountTier(): BelongsTo
+    {
+        return $this->belongsTo(AccountTier::class);
+    }
+
+    /**
+     * @return HasMany<Watchlist, $this>
+     */
+    public function watchlist(): HasMany
+    {
+        return $this->hasMany(Watchlist::class);
     }
 }

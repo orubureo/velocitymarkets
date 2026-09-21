@@ -7,51 +7,12 @@
         <ol class="carousel-indicators visible-lg visible-md">
             <li data-target="#main-slide" data-slide-to="0" class="active"></li>
             <li data-target="#main-slide" data-slide-to="1"></li>
-            <li data-target="#main-slide" data-slide-to="2"></li>
         </ol>
         <!-- Indicators Ends -->
         <!-- Carousel Inner Starts -->
         <div class="carousel-inner">
             <!-- Carousel Item Starts -->
-            <div class="item active bg-parallax item-1">
-                <div class="slider-content">
-                    <div class="container">
-                        <div class="slider-text hero-text-block">
-                            <h3 class="slide-title"><span>Secure</span> and <span>Easy Way</span><br /> To Trade</h3>
-                            <p class="hero-lead">Trade spot markets yourself, copy a top-performing trader
-                                automatically, or put your funds into a fixed-term investment plan &mdash; all from one
-                                dashboard.</p>
-                            <div class="hero-stats">
-                                <div class="hero-stat">
-                                    <strong>700K+</strong>
-                                    <span>Traders Worldwide</span>
-                                </div>
-                                <div class="hero-stat">
-                                    <strong>24/7</strong>
-                                    <span>Market Access</span>
-                                </div>
-                            </div>
-                            <div class="hero-cta">
-                                @auth
-                                    <a href="{{ route('dashboard') }}" class="btn btn-primary"><i
-                                            class="fa fa-tachometer"></i> Go To Dashboard</a>
-                                @else
-                                    <div class="hero-cta-row">
-                                        <a href="{{ route('register') }}" class="btn btn-primary">Create Account</a>
-                                        <a href="{{ route('login') }}" class="btn btn-ghost-orange">Sign In <i
-                                                class="fa fa-angle-right"></i></a>
-                                    </div>
-                                @endauth
-                            </div>
-                            <p class="hero-trust">Trade on Bitcoin, Gold, Oil, Apple, Tesla, crude oil and 6,400+ other
-                                world-renowned markets.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Carousel Item Ends -->
-            <!-- Carousel Item Starts -->
-            <div class="item bg-parallax item-2">
+            <div class="item active bg-parallax item-2">
                 <div class="slider-content">
                     <div class="container">
                         <div class="slider-text hero-text-block">
@@ -83,6 +44,44 @@
                             </div>
                             <p class="hero-trust">Trade on Bitcoin, Gold, Oil, Apple, Tesla, crude oil and 6,400+ other
                                 world-renowned markets.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Carousel Item Ends -->
+            <!-- Carousel Item Starts -->
+            <div class="item bg-parallax item-1">
+                <div class="slider-content">
+                    <div class="container">
+                        <div class="slider-text hero-text-block">
+                            <h3 class="slide-title"><span>Secure</span> and <span>Easy Way</span><br /> To Trade</h3>
+                            <p class="hero-lead">Trade spot markets yourself, copy a top-performing trader
+                                automatically, or put your funds into a fixed-term investment plan &mdash; all from one
+                                dashboard.</p>
+                            <div class="hero-stats">
+                                <div class="hero-stat">
+                                    <strong>700K+</strong>
+                                    <span>Traders Worldwide</span>
+                                </div>
+                                <div class="hero-stat">
+                                    <strong>24/7</strong>
+                                    <span>Market Access</span>
+                                </div>
+                            </div>
+                            <div class="hero-cta">
+                                @auth
+                                    <a href="{{ route('dashboard') }}" class="btn btn-primary"><i
+                                            class="fa fa-tachometer"></i> Go To Dashboard</a>
+                                @else
+                                    <div class="hero-cta-row">
+                                        <a href="{{ route('register') }}" class="btn btn-primary">Create Account</a>
+                                        <a href="{{ route('login') }}" class="btn btn-ghost-orange">Sign In <i
+                                                class="fa fa-angle-right"></i></a>
+                                    </div>
+                                @endauth
+                            </div>
+                            <p class="hero-trust">Trade on Bitcoin, Gold, Oil, Apple, Tesla, crude oil and 6,400+ other
+                                world-renowned markets.</p>
                         </div>
                     </div>
                 </div>
@@ -303,7 +302,7 @@
                 <div class="col-md-4 ts-padding bg-image-1">
                     <div>
                         <div class="text-center">
-                            <a class="button-video mfp-youtube" href="https://www.youtube.com/watch?v=0gv7OC9L2s8"></a>
+                            <a class="button-video mfp-youtube" href="https://www.youtube.com/watch?v=jNQXAC9IVRw"></a>
                         </div>
                     </div>
                 </div>
@@ -359,25 +358,228 @@
                         converter</p>
                 </div>
                 <!-- Section Heading Ends -->
+                {{--
+                    The theme's original calculator relied on the select2 plugin (its bundled
+                    select2.min.js throws "missing ./select2/core" — a broken build, unrelated
+                    to anything in this app) plus a live client-side call to the defunct
+                    blockchain.info/ticker API. Both failures meant the currency dropdown never
+                    populated and no conversion ever ran. Rebuilt below as a small vanilla-JS
+                    widget using real prices ($calculatorMarkets, from the same PriceService/
+                    CoinGecko data the rest of the app uses) rendered server-side — no third-party
+                    widget, no jQuery plugin dependency. The currency picker is a hand-built
+                    dropdown (open/close, compact scrollable panel) styled to match the theme's
+                    own orange-on-dark look, rather than a native <select> — with ~100 markets a
+                    native select's browser-drawn list is huge and inconsistent across devices.
+                --}}
                 <!-- Calculator Form Starts -->
                 <div class="col-md-12 text-center">
-                    <form class="bitcoin-calculator" id="bitcoin-calculator">
-                        <input class="form-input" name="btc-calculator-value" value="1">
-                        <div class="form-info"><i class="fa fa-bitcoin"></i></div>
+                    <form class="bitcoin-calculator" id="crypto-calculator" onsubmit="return false;">
+                        <input class="form-input" type="text" inputmode="decimal" id="calc-amount" value="1" autocomplete="off">
+                        <div class="form-info"><i class="fa fa-exchange"></i></div>
                         <div class="form-equal">=</div>
-                        <input class="form-input form-input-result" name="btc-calculator-result">
-                        <div class="form-wrap">
-                            <select id="currency-select" class="form-input select-currency select-primary"
-                                name="btc-calculator-currency" data-dropdown-class="select-primary-dropdown"></select>
+                        <input class="form-input form-input-result" type="text" inputmode="decimal" id="calc-result" autocomplete="off">
+                        <div class="form-wrap calc-dropdown" data-calc-dropdown>
+                            <button type="button" class="form-input select-currency select-primary calc-dropdown-trigger" id="calc-currency-trigger" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="calc-dropdown-label">{{ $calculatorMarkets[0]['display_name'] ?? '' }}</span>
+                                <i class="fa fa-caret-down calc-dropdown-caret" aria-hidden="true"></i>
+                            </button>
+                            <ul class="calc-dropdown-panel" id="calc-currency-panel" role="listbox" hidden>
+                                @foreach ($calculatorMarkets as $market)
+                                    <li role="option" tabindex="0" class="calc-dropdown-option {{ $loop->first ? 'is-selected' : '' }}"
+                                        data-symbol="{{ $market['symbol'] }}" data-price="{{ $market['price'] }}" data-label="{{ $market['display_name'] }}">
+                                        {{ $market['display_name'] }}
+                                    </li>
+                                @endforeach
+                            </ul>
                         </div>
                     </form>
-                    <p class="info"><i>* Data updated every 15 minutes</i></p>
+                    <p class="info"><i>* Live prices from our market data feed</i></p>
                 </div>
                 <!-- Calculator Form Ends -->
             </div>
         </div>
     </section>
     <!-- Crypto Calculator Section Ends -->
+
+    <style>
+        .calc-dropdown { position: relative; display: inline-block; }
+        .calc-dropdown-trigger {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            background: #fd961a;
+            border: 0;
+            border-radius: 3px;
+            padding: 0 10px;
+        }
+        .calc-dropdown-label {
+            font-size: 13px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .calc-dropdown-caret {
+            font-size: 12px;
+            flex-shrink: 0;
+            transition: transform .15s ease;
+        }
+        .calc-dropdown.is-open .calc-dropdown-caret { transform: rotate(180deg); }
+        .calc-dropdown-panel {
+            list-style: none;
+            margin: 6px 0 0;
+            padding: 4px 0;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 20;
+            min-width: 100%;
+            width: max-content;
+            max-width: 220px;
+            max-height: 230px;
+            overflow-y: auto;
+            background: #fd961a;
+            border-radius: 4px;
+            box-shadow: 0 12px 28px rgba(0,0,0,.4);
+        }
+        .calc-dropdown-panel[hidden] { display: none; }
+        .calc-dropdown-option {
+            padding: 9px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        .calc-dropdown-option:hover,
+        .calc-dropdown-option.is-selected { background: rgba(0,0,0,.2); }
+
+        @media (max-width: 767px) {
+            .calc-dropdown-panel { max-width: 180px; }
+
+            {{--
+                The theme's own mobile rules pair [amount input + icon] and [result
+                input + currency select] on two rows by relying on inline-block auto-
+                wrap arithmetic (fixed icon/select widths + `calc(100% - 125px)` on
+                the inputs) — tuned for its narrower select2-generated span. Our
+                slightly wider custom dropdown trigger tips that arithmetic over by a
+                few px and the second pair wraps onto its own row. Flexbox removes the
+                guesswork: each pair is guaranteed to share a row regardless of the
+                trigger's exact width, and `flex-basis: 100%` on the "=" forces it
+                onto its own row in between.
+            --}}
+            #crypto-calculator {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: stretch;
+                justify-content: center;
+                gap: 8px;
+            }
+            #crypto-calculator > * { margin: 0 !important; }
+            #crypto-calculator input.form-input {
+                flex: 1 1 auto;
+                width: auto;
+                min-width: 0;
+            }
+            #crypto-calculator .form-info {
+                flex: 0 0 auto;
+            }
+            #crypto-calculator .form-equal {
+                flex: 1 1 100%;
+                display: block;
+                text-align: center;
+                padding: 8px 0;
+            }
+            #crypto-calculator .calc-dropdown {
+                flex: 0 0 auto;
+            }
+        }
+    </style>
+
+    <script>
+        (function () {
+            var amountInput = document.getElementById('calc-amount');
+            var resultInput = document.getElementById('calc-result');
+            var wrapper = document.querySelector('[data-calc-dropdown]');
+            var trigger = document.getElementById('calc-currency-trigger');
+            var label = trigger ? trigger.querySelector('.calc-dropdown-label') : null;
+            var panel = document.getElementById('calc-currency-panel');
+
+            if (!amountInput || !resultInput || !wrapper || !trigger || !panel) return;
+
+            var options = Array.prototype.slice.call(panel.querySelectorAll('.calc-dropdown-option'));
+            var selected = options.filter(function (o) { return o.classList.contains('is-selected'); })[0] || options[0];
+
+            function currentPrice() {
+                return selected ? parseFloat(selected.getAttribute('data-price')) || 0 : 0;
+            }
+
+            function formatNumber(value) {
+                return isFinite(value) ? value.toLocaleString('en-US', { maximumFractionDigits: 8 }) : '';
+            }
+
+            function recalcFromAmount() {
+                var amount = parseFloat(String(amountInput.value).replace(/,/g, ''));
+                resultInput.value = isFinite(amount) ? formatNumber(amount * currentPrice()) : '';
+            }
+
+            function recalcFromResult() {
+                var result = parseFloat(String(resultInput.value).replace(/,/g, ''));
+                var price = currentPrice();
+                amountInput.value = (isFinite(result) && price > 0) ? formatNumber(result / price) : '';
+            }
+
+            function openPanel() {
+                panel.hidden = false;
+                wrapper.classList.add('is-open');
+                trigger.setAttribute('aria-expanded', 'true');
+            }
+
+            function closePanel() {
+                panel.hidden = true;
+                wrapper.classList.remove('is-open');
+                trigger.setAttribute('aria-expanded', 'false');
+            }
+
+            function selectOption(option) {
+                if (selected) selected.classList.remove('is-selected');
+                selected = option;
+                selected.classList.add('is-selected');
+                if (label) label.textContent = option.getAttribute('data-label');
+                closePanel();
+                recalcFromAmount();
+            }
+
+            trigger.addEventListener('click', function (e) {
+                e.stopPropagation();
+                panel.hidden ? openPanel() : closePanel();
+            });
+
+            options.forEach(function (option) {
+                option.addEventListener('click', function () { selectOption(option); });
+                option.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        selectOption(option);
+                    }
+                });
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!wrapper.contains(e.target)) closePanel();
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') closePanel();
+            });
+
+            amountInput.addEventListener('input', recalcFromAmount);
+            resultInput.addEventListener('input', recalcFromResult);
+
+            recalcFromAmount();
+        })();
+    </script>
     <!-- Team Section Starts -->
     <section class="team">
         <div class="container">

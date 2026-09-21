@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\User;
+use App\Notifications\KycStatusNotification;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -44,6 +45,8 @@ class Kyc extends Component
             'kyc_reviewed_at' => now(),
             'kyc_rejection_reason' => null,
         ]);
+
+        $user->notify(new KycStatusNotification(approved: true));
     }
 
     public function openRejectModal(int $userId): void
@@ -72,6 +75,8 @@ class Kyc extends Component
             'kyc_reviewed_at' => now(),
             'kyc_rejection_reason' => $this->rejectionReason,
         ]);
+
+        $user->notify(new KycStatusNotification(approved: false, rejectionReason: $this->rejectionReason));
 
         $this->closeRejectModal();
     }

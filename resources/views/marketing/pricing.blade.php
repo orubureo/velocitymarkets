@@ -3,6 +3,22 @@
     description="Compare VelocityMarkets investment plans — minimum and maximum stake, total return and duration — and choose the plan that fits your goals."
 >
 
+    {{--
+        The theme's base `.pricing-features li` rule sets font-size: 56px —
+        sized for a different (horizontal switcher) pricing layout elsewhere
+        in the theme. The later `.pricing-features li` block further down in
+        style.css resets float/width/padding for this card layout but never
+        resets font-size, so the 56px from the earlier rule still applies —
+        "Minimum"/"Maximum"/"Duration" render gigantic and clip the actual
+        value that follows. Reset it here, scoped to this page only.
+    --}}
+    <style>
+        .pricing-page .pricing-features li {
+            font-size: 15px;
+            white-space: normal;
+        }
+    </style>
+
     <!-- Banner Area Starts -->
     <section class="banner-area">
         <div class="banner-overlay">

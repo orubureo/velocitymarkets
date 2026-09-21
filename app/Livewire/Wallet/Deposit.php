@@ -33,33 +33,34 @@ class Deposit extends Component
 
     public function selectCurrency(string $currency): void
     {
-        if ($currency === 'USDT') {
-            $this->currency = 'USDT';
-            $this->awaitingNetwork = true;
+        $wallets = CryptoWallet::where('currency', $currency)->where('is_active', true)->get();
 
-            return;
-        }
-
-        $wallet = CryptoWallet::where('currency', $currency)
-            ->whereNull('network')
-            ->where('is_active', true)
-            ->first();
-
-        if (! $wallet) {
+        if ($wallets->isEmpty()) {
             session()->flash('error', 'No deposit address is configured for this option yet. Please choose another.');
 
             return;
         }
 
         $this->currency = $currency;
-        $this->network = '';
+
+        if ($wallets->count() > 1) {
+            // More than one active network configured for this currency —
+            // ask which one, same as the old USDT-only flow but for any
+            // currency the admin has set up multiple networks for.
+            $this->awaitingNetwork = true;
+
+            return;
+        }
+
+        $wallet = $wallets->first();
+        $this->network = (string) $wallet->network;
         $this->cryptoWalletId = $wallet->id;
         $this->step = 2;
     }
 
     public function selectNetwork(string $network): void
     {
-        $wallet = CryptoWallet::where('currency', 'USDT')
+        $wallet = CryptoWallet::where('currency', $this->currency)
             ->where('network', $network)
             ->where('is_active', true)
             ->first();
@@ -143,9 +144,13 @@ class Deposit extends Component
     public function render(QrCodeService $qr): View
     {
         $activeWallets = CryptoWallet::where('is_active', true)->get();
+        $walletsByCurrency = $activeWallets->groupBy('currency');
 
-        $availableCurrencies = $activeWallets->pluck('currency')->unique()->values();
-        $usdtNetworks = $activeWallets->where('currency', 'USDT')->pluck('network')->filter()->values();
+        $availableCurrencies = $walletsByCurrency->keys()->values();
+        $multiNetworkCurrencies = $walletsByCurrency->filter(fn ($wallets) => $wallets->count() > 1)->keys()->values();
+        $availableNetworks = $this->awaitingNetwork
+            ? $walletsByCurrency->get($this->currency, collect())->pluck('network')->filter()->values()
+            : collect();
 
         $selectedWallet = $this->cryptoWalletId
             ? $activeWallets->firstWhere('id', $this->cryptoWalletId)
@@ -153,7 +158,8 @@ class Deposit extends Component
 
         return view('livewire.wallet.deposit', [
             'availableCurrencies' => $availableCurrencies,
-            'usdtNetworks' => $usdtNetworks,
+            'multiNetworkCurrencies' => $multiNetworkCurrencies,
+            'availableNetworks' => $availableNetworks,
             'selectedWallet' => $selectedWallet,
             'qrCodeSvg' => ($this->step === 3 && $selectedWallet)
                 ? $qr->svgFor($selectedWallet->address)

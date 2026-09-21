@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\SupportTicket;
+use App\Notifications\SupportTicketReplyNotification;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -82,6 +83,8 @@ class SupportTickets extends Component
             'responded_at' => now(),
             'status' => 'resolved',
         ]);
+
+        $ticket->user->notify(new SupportTicketReplyNotification($ticket));
 
         $this->closeRespondModal();
     }

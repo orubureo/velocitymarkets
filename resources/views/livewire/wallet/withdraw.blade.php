@@ -5,6 +5,17 @@
         </flux:callout>
     @endif
 
+    @if (session('error'))
+        <flux:callout variant="danger" icon="x-circle">
+            {{ session('error') }}
+        </flux:callout>
+    @endif
+
+    @if ($withdrawalsPaused)
+        <flux:callout variant="danger" icon="lock-closed">
+            Withdrawals are currently paused for your account. Please contact support for assistance.
+        </flux:callout>
+    @else
     {{-- Step indicator --}}
     <x-wizard-steps :labels="['Method', 'Amount', 'Review']" :current="$step" />
 
@@ -181,5 +192,6 @@
                 </div>
             </div>
         </flux:card>
+    @endif
     @endif
 </div>
