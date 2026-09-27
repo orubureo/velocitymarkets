@@ -42,6 +42,16 @@
             'admin_adjustment' => 'Balance Adjustment',
         ];
         $filterIcon = fn (string $value) => $value === 'all' ? 'funnel' : $typeIcon($value);
+
+        // Performance-driven payouts (ROI, trade and copy-trade results) are
+        // algorithmic — no admin actually reviews them — so "Reviewed" is
+        // never shown for these types, regardless of what approved_at/by
+        // happen to hold on the record. Deposits, withdrawals and manual
+        // balance adjustments (bonus/admin_adjustment) genuinely are reviewed
+        // by an admin, so those keep showing it.
+        $isAutomatedPayout = fn (string $type) => in_array($type, [
+            'roi_payout', 'trade_profit', 'trade_loss', 'copy_trade_profit', 'copy_trade_loss',
+        ], true);
     @endphp
 
     @php
@@ -134,9 +144,9 @@
             <flux:table.columns class="[&_th]:!py-4">
                 <flux:table.column>Type</flux:table.column>
                 <flux:table.column>Amount</flux:table.column>
-                <flux:table.column>Status</flux:table.column>
-                <flux:table.column>Note</flux:table.column>
-                <flux:table.column>Date</flux:table.column>
+                <flux:table.column class="hidden md:table-cell">Status</flux:table.column>
+                <flux:table.column class="hidden md:table-cell">Note</flux:table.column>
+                <flux:table.column class="hidden md:table-cell">Date</flux:table.column>
             </flux:table.columns>
 
             <flux:table.rows>
@@ -165,13 +175,13 @@
                                 @endif
                             </div>
                         </flux:table.cell>
-                        <flux:table.cell class="!py-4">
+                        <flux:table.cell class="!py-4 hidden md:table-cell">
                             <x-status-badge :status="$transaction->status" />
                         </flux:table.cell>
-                        <flux:table.cell class="!py-4 text-zinc-500">
+                        <flux:table.cell class="!py-4 text-zinc-500 hidden md:table-cell">
                             <span class="block max-w-xs truncate">{{ $transaction->note }}</span>
                         </flux:table.cell>
-                        <flux:table.cell class="!py-4 text-zinc-500 whitespace-nowrap">
+                        <flux:table.cell class="!py-4 text-zinc-500 whitespace-nowrap hidden md:table-cell">
                             <div class="flex items-center justify-between gap-2">
                                 {{ $transaction->created_at->format('M j, Y') }}
                                 <flux:icon name="chevron-right" class="size-4 text-zinc-300 dark:text-zinc-600 transition-transform duration-200 group-hover:translate-x-0.5" />
@@ -248,7 +258,7 @@
                         <span class="text-zinc-500">Date</span>
                         <span class="text-zinc-900 dark:text-white">{{ $transaction->created_at->format('M j, Y \a\t g:i A') }}</span>
                     </div>
-                    @if ($transaction->approved_at)
+                    @if ($transaction->approved_at && ! $isAutomatedPayout($transaction->type))
                         <div class="flex items-center justify-between px-4 py-3">
                             <span class="text-zinc-500">Reviewed</span>
                             <span class="text-zinc-900 dark:text-white">

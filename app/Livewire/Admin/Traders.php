@@ -4,14 +4,19 @@ namespace App\Livewire\Admin;
 
 use App\Models\Trader;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Livewire\WithFileUploads;
 
 #[Title('Manage Traders')]
 #[Layout('layouts.admin')]
 class Traders extends Component
 {
+    use WithFileUploads;
+
     public bool $showModal = false;
 
     public ?int $editingId = null;
@@ -36,6 +41,10 @@ class Traders extends Component
 
     public string $maxCopyAmount = '';
 
+    public ?TemporaryUploadedFile $avatarFile = null;
+
+    public bool $removeCurrentAvatar = false;
+
     public bool $showDeleteModal = false;
 
     public ?int $deletingId = null;
@@ -48,7 +57,7 @@ class Traders extends Component
 
     public function openCreateModal(): void
     {
-        $this->reset(['editingId', 'name', 'tagline', 'bio', 'winRate', 'roi30d', 'maxCopyAmount']);
+        $this->reset(['editingId', 'name', 'tagline', 'bio', 'winRate', 'roi30d', 'maxCopyAmount', 'avatarFile', 'removeCurrentAvatar']);
         $this->tier = 'verified';
         $this->riskLevel = 'medium';
         $this->baseCopiers = '0';
@@ -72,6 +81,8 @@ class Traders extends Component
         $this->baseCopiers = (string) $trader->base_copiers;
         $this->minCopyAmount = (string) $trader->min_copy_amount;
         $this->maxCopyAmount = (string) $trader->max_copy_amount;
+        $this->avatarFile = null;
+        $this->removeCurrentAvatar = false;
         $this->resetValidation();
         $this->showModal = true;
     }
@@ -79,7 +90,7 @@ class Traders extends Component
     public function closeModal(): void
     {
         $this->showModal = false;
-        $this->reset(['editingId', 'name', 'tagline', 'bio', 'winRate', 'roi30d', 'maxCopyAmount']);
+        $this->reset(['editingId', 'name', 'tagline', 'bio', 'winRate', 'roi30d', 'maxCopyAmount', 'avatarFile', 'removeCurrentAvatar']);
         $this->tier = 'verified';
         $this->riskLevel = 'medium';
         $this->baseCopiers = '0';
@@ -99,6 +110,7 @@ class Traders extends Component
             'baseCopiers' => ['required', 'integer', 'min:0'],
             'minCopyAmount' => ['required', 'numeric', 'min:0'],
             'maxCopyAmount' => ['nullable', 'numeric', 'gt:minCopyAmount'],
+            'avatarFile' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ]);
 
         $data = [
@@ -114,6 +126,19 @@ class Traders extends Component
             'min_copy_amount' => $this->minCopyAmount,
             'max_copy_amount' => $this->maxCopyAmount ?: null,
         ];
+
+        $existing = $this->editingId ? Trader::find($this->editingId) : null;
+
+        if ($this->avatarFile) {
+            if ($existing?->avatar_path) {
+                Storage::disk('public')->delete($existing->avatar_path);
+            }
+
+            $data['avatar_path'] = Trader::storeAvatarFromPath($this->avatarFile->getRealPath());
+        } elseif ($this->removeCurrentAvatar && $existing?->avatar_path) {
+            Storage::disk('public')->delete($existing->avatar_path);
+            $data['avatar_path'] = null;
+        }
 
         if ($this->editingId) {
             Trader::findOrFail($this->editingId)->update($data);
@@ -156,7 +181,13 @@ class Traders extends Component
             'deleteConfirmation.in' => 'Type DELETE (all caps) to confirm.',
         ]);
 
-        Trader::findOrFail($this->deletingId)->delete();
+        $trader = Trader::findOrFail($this->deletingId);
+
+        if ($trader->avatar_path) {
+            Storage::disk('public')->delete($trader->avatar_path);
+        }
+
+        $trader->delete();
 
         $this->closeDeleteModal();
     }
@@ -170,6 +201,7 @@ class Traders extends Component
     {
         return view('livewire.admin.traders', [
             'traders' => Trader::orderBy('sort_order')->get(),
+            'editingTrader' => $this->editingId ? Trader::find($this->editingId) : null,
         ]);
     }
 }

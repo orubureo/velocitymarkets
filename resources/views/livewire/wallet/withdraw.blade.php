@@ -36,7 +36,7 @@
                 <button
                     type="button"
                     wire:click="selectMethod('bank_transfer')"
-                    class="group flex items-center gap-3 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-blue-500 hover:bg-blue-500/5 hover:-translate-y-0.5 hover:shadow-md transition-all text-left cursor-pointer"
+                    class="group flex items-center gap-3 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-blue-500 hover:bg-blue-500/5 transition-all text-left cursor-pointer"
                 >
                     <div class="p-2.5 bg-blue-500/10 rounded-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
                         <flux:icon name="building-library" class="size-5 text-blue-500" />
@@ -51,7 +51,7 @@
                 <button
                     type="button"
                     wire:click="selectMethod('crypto')"
-                    class="group flex items-center gap-3 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-teal-500 hover:bg-teal-500/5 hover:-translate-y-0.5 hover:shadow-md transition-all text-left cursor-pointer"
+                    class="group flex items-center gap-3 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-teal-500 hover:bg-teal-500/5 transition-all text-left cursor-pointer"
                 >
                     <div class="p-2.5 bg-teal-500/10 rounded-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
                         <flux:icon name="currency-dollar" class="size-5 text-teal-500" />
@@ -89,7 +89,7 @@
                     <button
                         type="button"
                         wire:click="selectCurrency('{{ $currencyOption }}')"
-                        class="group flex flex-col items-center gap-2 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:-translate-y-0.5 hover:shadow-md transition-all cursor-pointer {{ $currencyHover($currencyOption) }}"
+                        class="group flex flex-col items-center gap-2 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-all cursor-pointer {{ $currencyHover($currencyOption) }}"
                     >
                         <x-crypto-icon :currency="$currencyOption" class="size-10 transition-transform duration-300 group-hover:scale-110" />
                         <span class="font-semibold text-zinc-900 dark:text-white">{{ $currencyOption }}</span>

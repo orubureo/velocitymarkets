@@ -5,7 +5,7 @@
     @include('partials.head')
 </head>
 
-<body class="theme-admin min-h-screen bg-zinc-50 dark:bg-zinc-950 flex">
+<body class="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex">
     @php
         $adminNavItems = [
             ['icon' => 'squares-2x2', 'route' => 'admin.dashboard', 'label' => __('Dashboard')],
@@ -15,14 +15,20 @@
             ['icon' => 'banknotes', 'route' => 'admin.deposits', 'label' => __('Deposits')],
             ['icon' => 'arrow-up-tray', 'route' => 'admin.withdrawals', 'label' => __('Withdrawals')],
             ['icon' => 'chart-bar', 'route' => 'admin.markets', 'label' => __('Markets')],
-            ['icon' => 'briefcase', 'route' => 'admin.investment-plans', 'label' => __('Investment Plans')],
+            ['icon' => 'briefcase', 'label' => __('Investment'), 'children' => [
+                ['route' => 'admin.investment-plans', 'label' => __('Investment Plans')],
+                ['route' => 'admin.investments', 'label' => __('Investments')],
+            ]],
             ['icon' => 'star', 'route' => 'admin.account-tiers', 'label' => __('Account Tiers')],
-            ['icon' => 'bolt', 'route' => 'admin.signal-tiers', 'label' => __('Signal Tiers')],
-            ['icon' => 'signal', 'route' => 'admin.signals', 'label' => __('Signals')],
-            ['icon' => 'user-group', 'route' => 'admin.traders', 'label' => __('Copy Experts')],
+            ['icon' => 'bolt', 'label' => __('Signal'), 'children' => [
+                ['route' => 'admin.signal-tiers', 'label' => __('Signal Tiers')],
+                ['route' => 'admin.signals', 'label' => __('Signals')],
+            ]],
+            ['icon' => 'user-group', 'label' => __('Copy'), 'children' => [
+                ['route' => 'admin.traders', 'label' => __('Copy Experts')],
+                ['route' => 'admin.copy-subscriptions', 'label' => __('Copy Subscriptions')],
+            ]],
             ['icon' => 'wallet', 'route' => 'admin.crypto-wallets', 'label' => __('Crypto Wallets')],
-            ['icon' => 'chart-pie', 'route' => 'admin.investments', 'label' => __('Investments')],
-            ['icon' => 'arrow-trending-up', 'route' => 'admin.copy-subscriptions', 'label' => __('Copy Subscriptions')],
         ];
     @endphp
 
@@ -45,18 +51,7 @@
         </div>
 
         <nav class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden py-4 flex flex-col gap-0.5 px-3">
-            @foreach ($adminNavItems as $item)
-                @php $isCurrent = request()->routeIs($item['route']); @endphp
-                <a href="{{ route($item['route']) }}" wire:navigate
-                    class="group relative flex items-center gap-3.5 px-3 py-3 rounded-xl text-base font-bold transition-all duration-200 hover:translate-x-0.5 whitespace-nowrap
-                        {{ $isCurrent ? 'bg-accent/10 text-accent' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 hover:text-zinc-900 dark:hover:text-zinc-50' }}">
-                    @if ($isCurrent)
-                        <span class="nav-indicator absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-accent animate-glow-pulse"></span>
-                    @endif
-                    <flux:icon :name="$item['icon']" :variant="$isCurrent ? 'solid' : 'outline'" class="size-6 shrink-0 transition-transform duration-200 group-hover:scale-110" />
-                    <span>{{ $item['label'] }}</span>
-                </a>
-            @endforeach
+            <x-admin.nav-items :items="$adminNavItems" />
         </nav>
 
         <div class="shrink-0 border-t border-zinc-200 dark:border-zinc-800 p-3 bg-zinc-50/60 dark:bg-zinc-950/40">
@@ -87,18 +82,7 @@
         <div class="flex-1 min-h-0 overflow-y-auto overscroll-contain">
         <flux:sidebar.nav>
             <div class="grid gap-0.5">
-                @foreach ($adminNavItems as $item)
-                    @php $isCurrent = request()->routeIs($item['route']); @endphp
-                    <a href="{{ route($item['route']) }}" wire:navigate
-                        class="group relative flex items-center gap-3.5 px-3 py-3 rounded-xl text-base font-bold transition-all duration-200 whitespace-nowrap
-                            {{ $isCurrent ? 'bg-accent/10 text-accent' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 hover:text-zinc-900 dark:hover:text-zinc-50' }}">
-                        @if ($isCurrent)
-                            <span class="nav-indicator absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-accent animate-glow-pulse"></span>
-                        @endif
-                        <flux:icon :name="$item['icon']" :variant="$isCurrent ? 'solid' : 'outline'" class="size-6 shrink-0" />
-                        <span>{{ $item['label'] }}</span>
-                    </a>
-                @endforeach
+                <x-admin.nav-items :items="$adminNavItems" />
             </div>
         </flux:sidebar.nav>
         </div>

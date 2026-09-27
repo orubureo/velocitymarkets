@@ -29,16 +29,14 @@
                         <flux:table.cell class="font-mono">{{ $tier->total_return_percent }}%</flux:table.cell>
                         <flux:table.cell class="font-mono">{{ $tier->referral_bonus_percent }}%</flux:table.cell>
                         <flux:table.cell>
-                            <flux:badge size="sm" color="{{ $tier->is_active ? 'lime' : 'zinc' }}">
+                            <flux:badge size="sm" variant="solid" color="{{ $tier->is_active ? 'green' : 'zinc' }}">
                                 {{ $tier->is_active ? 'Active' : 'Disabled' }}
                             </flux:badge>
                         </flux:table.cell>
                         <flux:table.cell>
                             <div class="flex items-center gap-2">
-                                <flux:button size="sm" variant="{{ $tier->is_active ? 'outline' : 'primary' }}" icon="{{ $tier->is_active ? 'pause' : 'play' }}" wire:click="toggleActive({{ $tier->id }})">
-                                    {{ $tier->is_active ? 'Disable' : 'Enable' }}
-                                </flux:button>
-                                <flux:button size="sm" variant="outline" icon="pencil" wire:click="openEditModal({{ $tier->id }})" aria-label="Edit {{ $tier->name }}" />
+                                <flux:button size="sm" variant="outline" icon="{{ $tier->is_active ? 'pause' : 'play' }}" wire:click="toggleActive({{ $tier->id }})" aria-label="{{ $tier->is_active ? 'Disable' : 'Enable' }} {{ $tier->name }}" />
+                                <flux:button size="sm" variant="primary" color="blue" icon="pencil" wire:click="openEditModal({{ $tier->id }})" aria-label="Edit {{ $tier->name }}" />
                                 <flux:button size="sm" variant="danger" icon="trash" wire:click="confirmDelete({{ $tier->id }})" aria-label="Delete {{ $tier->name }}" />
                             </div>
                         </flux:table.cell>

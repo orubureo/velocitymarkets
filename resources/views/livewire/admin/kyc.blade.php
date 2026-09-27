@@ -59,6 +59,11 @@
                                         View Doc
                                     </flux:button>
                                 @endif
+                                @if($application->kyc_selfie_path)
+                                    <flux:button size="sm" variant="outline" href="{{ route('admin.kyc.selfie', $application->id) }}" target="_blank">
+                                        View Selfie
+                                    </flux:button>
+                                @endif
                                 @if($application->kyc_status === 'pending')
                                     <flux:button size="sm" variant="primary" icon="check" wire:click="approve({{ $application->id }})">
                                         Approve

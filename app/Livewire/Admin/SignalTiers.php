@@ -22,6 +22,8 @@ class SignalTiers extends Component
 
     public string $percent = '';
 
+    public string $price = '';
+
     public string $winRatePercent = '';
 
     public string $roiPercent = '';
@@ -40,7 +42,7 @@ class SignalTiers extends Component
 
     public function openCreateModal(): void
     {
-        $this->reset(['editingId', 'name', 'description', 'percent', 'winRatePercent', 'roiPercent', 'durationDays']);
+        $this->reset(['editingId', 'name', 'description', 'percent', 'price', 'winRatePercent', 'roiPercent', 'durationDays']);
         $this->resetValidation();
         $this->showModal = true;
     }
@@ -53,6 +55,7 @@ class SignalTiers extends Component
         $this->name = $tier->name;
         $this->description = (string) $tier->description;
         $this->percent = (string) $tier->percent;
+        $this->price = (string) $tier->price;
         $this->winRatePercent = (string) $tier->win_rate_percent;
         $this->roiPercent = (string) $tier->roi_percent;
         $this->durationDays = (string) $tier->duration_days;
@@ -63,7 +66,7 @@ class SignalTiers extends Component
     public function closeModal(): void
     {
         $this->showModal = false;
-        $this->reset(['editingId', 'name', 'description', 'percent', 'winRatePercent', 'roiPercent', 'durationDays']);
+        $this->reset(['editingId', 'name', 'description', 'percent', 'price', 'winRatePercent', 'roiPercent', 'durationDays']);
     }
 
     public function save(): void
@@ -72,6 +75,7 @@ class SignalTiers extends Component
             'name' => ['required', 'string', 'max:100'],
             'description' => ['nullable', 'string', 'max:500'],
             'percent' => ['required', 'integer', 'min:1', 'max:100'],
+            'price' => ['required', 'numeric', 'min:0.01'],
             'winRatePercent' => ['required', 'numeric', 'min:0', 'max:100'],
             'roiPercent' => ['required', 'numeric', 'min:0'],
             'durationDays' => ['required', 'integer', 'min:1'],
@@ -81,6 +85,7 @@ class SignalTiers extends Component
             'name' => $this->name,
             'description' => $this->description ?: null,
             'percent' => $this->percent,
+            'price' => $this->price,
             'win_rate_percent' => $this->winRatePercent,
             'roi_percent' => $this->roiPercent,
             'duration_days' => $this->durationDays,

@@ -8,26 +8,32 @@
         </div>
 
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <flux:card class="trading-card relative overflow-hidden flex flex-col gap-3 bg-gradient-to-br from-zinc-50 to-white dark:from-zinc-900 dark:to-zinc-950">
+            <flux:card class="trading-card group relative overflow-hidden flex flex-col gap-3 bg-gradient-to-br from-zinc-50 to-white dark:from-zinc-900 dark:to-zinc-950">
                 <div class="flex items-center justify-between">
                     <flux:text size="sm" class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Pending Deposits</flux:text>
-                    <div class="stat-icon-brand"><flux:icon name="banknotes" class="size-5" /></div>
+                    <div class="stat-icon-brand !rounded-full !size-9 flex items-center justify-center !p-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+                        <flux:icon name="banknotes" class="size-4" />
+                    </div>
                 </div>
                 <div class="text-3xl font-bold font-mono tabular-nums">{{ $pendingDeposits }}</div>
             </flux:card>
 
-            <flux:card class="trading-card relative overflow-hidden flex flex-col gap-3 bg-gradient-to-br from-zinc-50 to-white dark:from-zinc-900 dark:to-zinc-950">
+            <flux:card class="trading-card group relative overflow-hidden flex flex-col gap-3 bg-gradient-to-br from-zinc-50 to-white dark:from-zinc-900 dark:to-zinc-950">
                 <div class="flex items-center justify-between">
                     <flux:text size="sm" class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Pending Withdrawals</flux:text>
-                    <div class="stat-icon-down"><flux:icon name="arrow-up-tray" class="size-5" /></div>
+                    <div class="stat-icon-down !rounded-full !size-9 flex items-center justify-center !p-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+                        <flux:icon name="arrow-up-tray" class="size-4" />
+                    </div>
                 </div>
                 <div class="text-3xl font-bold font-mono tabular-nums">{{ $pendingWithdrawals }}</div>
             </flux:card>
 
-            <flux:card class="trading-card relative overflow-hidden flex flex-col gap-3 bg-gradient-to-br from-zinc-50 to-white dark:from-zinc-900 dark:to-zinc-950">
+            <flux:card class="trading-card group relative overflow-hidden flex flex-col gap-3 bg-gradient-to-br from-zinc-50 to-white dark:from-zinc-900 dark:to-zinc-950">
                 <div class="flex items-center justify-between">
                     <flux:text size="sm" class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Total Users</flux:text>
-                    <div class="stat-icon-up"><flux:icon name="users" class="size-5" /></div>
+                    <div class="stat-icon-up !rounded-full !size-9 flex items-center justify-center !p-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+                        <flux:icon name="users" class="size-4" />
+                    </div>
                 </div>
                 <div class="text-3xl font-bold font-mono tabular-nums">{{ number_format($totalUsers) }}</div>
                 <div class="inline-flex items-center gap-1 w-fit px-2 py-0.5 rounded-full text-xs font-semibold bg-green-500/10 text-green-600 dark:text-green-400">
@@ -36,10 +42,12 @@
                 </div>
             </flux:card>
 
-            <flux:card class="trading-card relative overflow-hidden flex flex-col gap-3 bg-gradient-to-br from-zinc-50 to-white dark:from-zinc-900 dark:to-zinc-950">
+            <flux:card class="trading-card group relative overflow-hidden flex flex-col gap-3 bg-gradient-to-br from-zinc-50 to-white dark:from-zinc-900 dark:to-zinc-950">
                 <div class="flex items-center justify-between">
                     <flux:text size="sm" class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">Transaction Volume (24h)</flux:text>
-                    <div class="stat-icon-brand"><flux:icon name="chart-bar" class="size-5" /></div>
+                    <div class="stat-icon-brand !rounded-full !size-9 flex items-center justify-center !p-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+                        <flux:icon name="chart-bar" class="size-4" />
+                    </div>
                 </div>
                 <div class="text-3xl font-bold font-mono tabular-nums">${{ number_format($volume24h, 2) }}</div>
                 @if (! is_null($volumeChangePercent))
@@ -58,14 +66,19 @@
             <div class="lg:col-span-2 min-w-0">
                 <flux:card class="trading-card h-full">
                     <div class="flex items-start justify-between gap-4 mb-1">
-                        <div>
-                            <flux:heading size="lg">User Registrations</flux:heading>
-                            <flux:text size="sm" class="text-zinc-500">
-                                New sign-ups per day, last {{ $windowDays }} days
-                                @if ($peakCount > 0)
-                                    &middot; peak {{ $peakCount }} on {{ $peakLabel }}
-                                @endif
-                            </flux:text>
+                        <div class="flex items-start gap-3">
+                            <div class="stat-icon-brand shrink-0">
+                                <flux:icon name="chart-bar" class="size-5" />
+                            </div>
+                            <div>
+                                <flux:heading size="lg">User Registrations</flux:heading>
+                                <flux:text size="sm" class="text-zinc-500">
+                                    New sign-ups per day, last {{ $windowDays }} days
+                                    @if ($peakCount > 0)
+                                        &middot; peak {{ $peakCount }} on {{ $peakLabel }}
+                                    @endif
+                                </flux:text>
+                            </div>
                         </div>
                         <div class="text-right shrink-0">
                             <flux:heading size="lg" class="font-mono">{{ number_format($signupsCurrentTotal) }}</flux:heading>
@@ -105,7 +118,12 @@
             {{-- Alerts --}}
             <div class="min-w-0">
                 <flux:card class="trading-card flex flex-col gap-4">
-                    <flux:heading size="lg">Alerts</flux:heading>
+                    <div class="flex items-center gap-3">
+                        <div class="stat-icon-amber shrink-0">
+                            <flux:icon name="bell-alert" class="size-5" />
+                        </div>
+                        <flux:heading size="lg">Alerts</flux:heading>
+                    </div>
 
                     <div class="flex flex-col gap-3">
                         @if ($pendingDeposits > 0)
@@ -163,22 +181,27 @@
         {{-- Transaction Overview chart --}}
         <flux:card class="trading-card">
             <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-1">
-                <div>
-                    <flux:heading size="lg">Transaction Overview</flux:heading>
-                    <flux:text size="sm" class="text-zinc-500">Settled deposits vs withdrawals, last {{ $windowDays }} days</flux:text>
+                <div class="flex items-start gap-3">
+                    <div class="stat-icon-sky shrink-0">
+                        <flux:icon name="arrows-right-left" class="size-5" />
+                    </div>
+                    <div>
+                        <flux:heading size="lg">Transaction Overview</flux:heading>
+                        <flux:text size="sm" class="text-zinc-500">Settled deposits vs withdrawals, last {{ $windowDays }} days</flux:text>
 
-                    <div class="flex items-center gap-4 mt-2">
-                        <div class="flex items-center gap-1.5">
-                            <span class="inline-block size-2 rounded-full bg-accent"></span>
-                            <flux:text size="xs" class="text-zinc-500">Deposits in</flux:text>
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <span class="inline-block size-2 rounded-full bg-red-500"></span>
-                            <flux:text size="xs" class="text-zinc-500">Withdrawals out</flux:text>
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <span class="inline-block w-3 h-0.5 border-t border-dashed border-zinc-400"></span>
-                            <flux:text size="xs" class="text-zinc-500">7-day net average</flux:text>
+                        <div class="flex items-center gap-4 mt-2">
+                            <div class="flex items-center gap-1.5">
+                                <span class="inline-block size-2 rounded-full bg-accent"></span>
+                                <flux:text size="xs" class="text-zinc-500">Deposits in</flux:text>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="inline-block size-2 rounded-full bg-red-500"></span>
+                                <flux:text size="xs" class="text-zinc-500">Withdrawals out</flux:text>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="inline-block w-3 h-0.5 border-t border-dashed border-zinc-400"></span>
+                                <flux:text size="xs" class="text-zinc-500">7-day net average</flux:text>
+                            </div>
                         </div>
                     </div>
                 </div>

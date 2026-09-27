@@ -18,7 +18,7 @@
         $faqs = [
             [
                 'q' => 'How do I get my account verified?',
-                'a' => 'Submit a government-issued ID and a proof of address from your dashboard to complete identity verification (KYC). Verification is required before you can withdraw funds, and reviews are usually completed within a day.',
+                'a' => 'Submit a government-issued ID and a selfie from Settings → Verification to complete identity verification (KYC). Reviews are usually completed within a day.',
             ],
             [
                 'q' => 'How do deposits work?',

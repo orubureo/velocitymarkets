@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Admin extends Authenticatable
@@ -34,6 +33,9 @@ class Admin extends Authenticatable
 
     public function avatarUrl(): ?string
     {
-        return $this->avatar_path ? Storage::disk('public')->url($this->avatar_path) : null;
+        // Root-relative (not Storage::url(), which bakes in the fixed
+        // APP_URL host) so it still resolves when the app is reached through
+        // a different origin than APP_URL, e.g. a share/tunnel URL.
+        return $this->avatar_path ? '/storage/'.$this->avatar_path : null;
     }
 }

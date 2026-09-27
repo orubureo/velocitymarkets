@@ -28,6 +28,7 @@ class Users extends Component
     {
         return view('livewire.admin.users', [
             'users' => User::query()
+                ->with('accountTier')
                 ->when($this->search, fn ($q) => $q->where(fn ($q2) => $q2
                     ->where('name', 'like', "%{$this->search}%")
                     ->orWhere('email', 'like', "%{$this->search}%")))

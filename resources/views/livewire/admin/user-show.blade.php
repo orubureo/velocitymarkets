@@ -5,6 +5,14 @@
     </flux:link>
 
     {{-- Identity --}}
+    @php
+        $kycBadge = match ($user->kyc_status) {
+            'approved' => ['color' => 'green', 'label' => 'Verified'],
+            'pending' => ['color' => 'sky', 'label' => 'Pending'],
+            'rejected' => ['color' => 'red', 'label' => 'Rejected'],
+            default => ['color' => 'zinc', 'label' => 'Not Submitted'],
+        };
+    @endphp
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div class="flex items-center gap-4 min-w-0">
             <flux:avatar :name="$user->name" color="auto" size="xl" />
@@ -12,10 +20,10 @@
                 <div class="flex items-center gap-2 flex-wrap">
                     <flux:heading size="xl" class="text-zinc-900 dark:text-white truncate">{{ $user->name }}</flux:heading>
                     @if ($user->is_blocked)
-                        <flux:badge size="sm" color="red">Blocked</flux:badge>
+                        <flux:badge size="sm" variant="solid" color="red">Blocked</flux:badge>
                     @endif
                     @if ($user->withdrawals_paused)
-                        <flux:badge size="sm" color="amber">Withdrawals Paused</flux:badge>
+                        <flux:badge size="sm" variant="solid" color="amber">Withdrawals Paused</flux:badge>
                     @endif
                 </div>
                 <flux:text class="text-zinc-500 truncate block" title="{{ $user->email }}">{{ $user->email }}</flux:text>
@@ -23,7 +31,7 @@
         </div>
 
         <div class="flex items-center gap-3 shrink-0">
-            <x-status-badge :status="$user->kyc_status" />
+            <flux:badge size="sm" variant="solid" color="{{ $kycBadge['color'] }}">{{ $kycBadge['label'] }}</flux:badge>
             <flux:text size="sm" class="text-zinc-400">Joined {{ $user->created_at->format('M j, Y') }}</flux:text>
 
             <flux:dropdown position="bottom" align="end">
@@ -80,11 +88,16 @@
 
     {{-- Wallet --}}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <flux:card class="trading-card lg:col-span-2 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-            <div>
-                <flux:text size="sm" class="text-zinc-500 font-medium">Wallet Balance</flux:text>
-                <div class="text-4xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white mt-1">
-                    ${{ number_format($wallet->balance ?? 0, 2) }}
+        <flux:card class="trading-card group lg:col-span-2 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+            <div class="flex items-center gap-4">
+                <div class="stat-icon-brand !rounded-full !size-12 flex items-center justify-center !p-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+                    <flux:icon name="wallet" class="size-5" />
+                </div>
+                <div>
+                    <flux:text size="sm" class="text-zinc-500 font-medium">Wallet Balance</flux:text>
+                    <div class="text-4xl font-bold font-mono tabular-nums text-zinc-900 dark:text-white mt-1">
+                        ${{ number_format($wallet->balance ?? 0, 2) }}
+                    </div>
                 </div>
             </div>
 
@@ -95,24 +108,44 @@
 
         <flux:card class="trading-card flex flex-col justify-center gap-4">
             <div class="flex items-center justify-between gap-4">
-                <flux:text size="sm" class="text-zinc-500">Deposited</flux:text>
+                <div class="flex items-center gap-2.5">
+                    <div class="stat-icon-up !rounded-full !size-8 flex items-center justify-center !p-0">
+                        <flux:icon name="arrow-down-left" class="size-3.5" />
+                    </div>
+                    <flux:text size="sm" class="text-zinc-500">Deposited</flux:text>
+                </div>
                 <flux:text class="font-mono font-semibold text-green-600 dark:text-green-400">${{ number_format($totalDeposits, 2) }}</flux:text>
             </div>
             <div class="flex items-center justify-between gap-4">
-                <flux:text size="sm" class="text-zinc-500">Withdrawn</flux:text>
+                <div class="flex items-center gap-2.5">
+                    <div class="stat-icon-down !rounded-full !size-8 flex items-center justify-center !p-0">
+                        <flux:icon name="arrow-up-right" class="size-3.5" />
+                    </div>
+                    <flux:text size="sm" class="text-zinc-500">Withdrawn</flux:text>
+                </div>
                 <flux:text class="font-mono font-semibold text-red-600 dark:text-red-400">${{ number_format($totalWithdrawals, 2) }}</flux:text>
             </div>
             <div class="flex items-center justify-between gap-4">
-                <flux:text size="sm" class="text-zinc-500">Trades placed</flux:text>
+                <div class="flex items-center gap-2.5">
+                    <div class="stat-icon-violet !rounded-full !size-8 flex items-center justify-center !p-0">
+                        <flux:icon name="chart-bar" class="size-3.5" />
+                    </div>
+                    <flux:text size="sm" class="text-zinc-500">Trades placed</flux:text>
+                </div>
                 <flux:text class="font-mono font-semibold text-zinc-900 dark:text-white">{{ number_format($tradesCount) }}</flux:text>
             </div>
         </flux:card>
     </div>
 
     {{-- Details --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-8">
-        <div>
-            <flux:heading class="uppercase tracking-wide text-xs text-zinc-400 mb-4">Profile</flux:heading>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <flux:card class="trading-card flex flex-col gap-4">
+            <div class="flex items-center gap-2.5">
+                <div class="stat-icon-sky shrink-0">
+                    <flux:icon name="identification" class="size-4" />
+                </div>
+                <flux:heading class="uppercase tracking-wide text-xs text-zinc-400">Profile</flux:heading>
+            </div>
             <dl class="grid grid-cols-2 gap-y-4">
                 <dt class="text-sm text-zinc-500">Full name</dt>
                 <dd class="text-sm font-medium text-zinc-900 dark:text-white text-right">{{ $user->name }}</dd>
@@ -126,10 +159,15 @@
                 <dt class="text-sm text-zinc-500">Country</dt>
                 <dd class="text-sm font-medium text-zinc-900 dark:text-white text-right">{{ $user->country ?? '—' }}</dd>
             </dl>
-        </div>
+        </flux:card>
 
-        <div>
-            <flux:heading class="uppercase tracking-wide text-xs text-zinc-400 mb-4">Account</flux:heading>
+        <flux:card class="trading-card flex flex-col gap-4">
+            <div class="flex items-center gap-2.5">
+                <div class="stat-icon-amber shrink-0">
+                    <flux:icon name="user-group" class="size-4" />
+                </div>
+                <flux:heading class="uppercase tracking-wide text-xs text-zinc-400">Account</flux:heading>
+            </div>
             <dl class="grid grid-cols-2 gap-y-4">
                 <dt class="text-sm text-zinc-500">Referral code</dt>
                 <dd class="text-sm font-mono font-medium text-zinc-900 dark:text-white text-right">{{ $user->referral_code ?? '—' }}</dd>
@@ -140,7 +178,7 @@
                 <dt class="text-sm text-zinc-500">Open tickets</dt>
                 <dd class="text-sm font-medium text-zinc-900 dark:text-white text-right">{{ $openTickets }}</dd>
             </dl>
-        </div>
+        </flux:card>
     </div>
 
     @if ($wallet)

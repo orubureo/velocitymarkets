@@ -27,16 +27,14 @@
                         <flux:table.cell class="font-mono text-green-500">{{ $plan->roi_percent }}%</flux:table.cell>
                         <flux:table.cell>{{ $plan->duration_days }} days</flux:table.cell>
                         <flux:table.cell>
-                            <flux:badge size="sm" color="{{ $plan->is_active ? 'lime' : 'zinc' }}">
+                            <flux:badge size="sm" variant="solid" color="{{ $plan->is_active ? 'green' : 'zinc' }}">
                                 {{ $plan->is_active ? 'Active' : 'Disabled' }}
                             </flux:badge>
                         </flux:table.cell>
                         <flux:table.cell>
                             <div class="flex items-center gap-2">
-                                <flux:button size="sm" variant="{{ $plan->is_active ? 'outline' : 'primary' }}" icon="{{ $plan->is_active ? 'pause' : 'play' }}" wire:click="toggleActive({{ $plan->id }})">
-                                    {{ $plan->is_active ? 'Disable' : 'Enable' }}
-                                </flux:button>
-                                <flux:button size="sm" variant="outline" icon="pencil" wire:click="openEditModal({{ $plan->id }})" aria-label="Edit {{ $plan->name }}" />
+                                <flux:button size="sm" variant="outline" icon="{{ $plan->is_active ? 'pause' : 'play' }}" wire:click="toggleActive({{ $plan->id }})" aria-label="{{ $plan->is_active ? 'Disable' : 'Enable' }} {{ $plan->name }}" />
+                                <flux:button size="sm" variant="primary" color="blue" icon="pencil" wire:click="openEditModal({{ $plan->id }})" aria-label="Edit {{ $plan->name }}" />
                                 <flux:button size="sm" variant="danger" icon="trash" wire:click="confirmDelete({{ $plan->id }})" aria-label="Delete {{ $plan->name }}" />
                             </div>
                         </flux:table.cell>

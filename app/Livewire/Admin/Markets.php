@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\Market;
 use App\Models\Trade;
+use App\Services\PriceService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
@@ -124,10 +125,13 @@ class Markets extends Component
         $this->closeDeleteModal();
     }
 
-    public function render(): View
+    public function render(PriceService $prices): View
     {
+        $markets = Market::orderBy('sort_order')->get();
+
         return view('livewire.admin.markets', [
-            'markets' => Market::orderBy('sort_order')->get(),
+            'markets' => $markets,
+            'marketIcons' => $prices->iconsFor($markets->pluck('coingecko_id')->filter()->unique()->all()),
         ]);
     }
 }

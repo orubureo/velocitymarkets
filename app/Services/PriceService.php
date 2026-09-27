@@ -54,6 +54,20 @@ class PriceService
     }
 
     /**
+     * Bulk-fetch official coin logos for an explicit list of CoinGecko ids,
+     * regardless of whether those markets are active — for admin screens
+     * that manage every market, unlike marketIcons() which only covers the
+     * active ones traders can see.
+     *
+     * @param  array<int, string>  $coingeckoIds
+     * @return array<string, string>
+     */
+    public function iconsFor(array $coingeckoIds): array
+    {
+        return collect($this->marketSnapshots($coingeckoIds))->pluck('image', 'id')->filter()->all();
+    }
+
+    /**
      * Live ticker data (price + 24h change + icon) for a curated set of markets,
      * keyed by symbol so blade can look each one up directly. Pass no symbols to
      * get every supported market.
@@ -92,16 +106,22 @@ class PriceService
     }
 
     /**
-     * Bulk snapshot (image, price, 24h change) for every supported market in a
-     * single request, keyed by coingecko_id. Cached briefly so price/change stay
+     * Bulk snapshot (image, price, 24h change) for every supported market — or
+     * for an explicit list of CoinGecko ids, when given one — in a single
+     * request, keyed by coingecko_id. Cached briefly so price/change stay
      * reasonably live without hammering the API on every request.
      *
+     * @param  array<int, string>|null  $coingeckoIds  Explicit ids to fetch, or null for every active market.
      * @return array<int, array{id: string, image: string|null, price: int|float|null, change_pct: int|float|null, market_cap: int|float|null}>
      */
-    protected function marketSnapshots(): array
+    protected function marketSnapshots(?array $coingeckoIds = null): array
     {
-        return Cache::remember('market-snapshots', now()->addSeconds(60), function () {
-            $ids = $this->supportedMarkets()->pluck('coingecko_id')->filter()->unique()->values();
+        $cacheKey = $coingeckoIds === null ? 'market-snapshots' : 'market-snapshots:'.md5(implode(',', $coingeckoIds));
+
+        return Cache::remember($cacheKey, now()->addSeconds(60), function () use ($coingeckoIds) {
+            $ids = $coingeckoIds !== null
+                ? collect($coingeckoIds)->filter()->unique()->values()
+                : $this->supportedMarkets()->pluck('coingecko_id')->filter()->unique()->values();
 
             if ($ids->isEmpty()) {
                 return [];

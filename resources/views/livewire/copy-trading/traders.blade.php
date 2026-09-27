@@ -22,47 +22,7 @@
             '0,24 15,18 30,20 45,12 60,14 75,6 100,8',
             '0,18 15,20 30,12 45,14 60,6 75,8 100,2',
         ];
-        $stepFn = 'let s=null,d=900;function step(ts){if(!s)s=ts;const p=Math.min((ts-s)/d,1);display=target*(1-Math.pow(1-p,3));if(p<1)requestAnimationFrame(step)}requestAnimationFrame(step)';
     @endphp
-
-    {{-- Summary strip --}}
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <flux:card class="trading-card group flex items-center gap-3">
-            <div class="stat-icon-brand !rounded-xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                <flux:icon name="sparkles" class="size-5" />
-            </div>
-            <div>
-                <flux:text size="sm" class="text-zinc-500">Traders Copied</flux:text>
-                <div class="font-mono text-2xl font-bold text-zinc-900 dark:text-white"
-                    x-data="{ display: 0, target: {{ $activeCount }} }" x-init="{{ $stepFn }}"
-                    x-text="Math.round(display).toLocaleString('en-US')">0</div>
-            </div>
-        </flux:card>
-
-        <flux:card class="trading-card group flex items-center gap-3">
-            <div class="stat-icon-violet !rounded-xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                <flux:icon name="banknotes" class="size-5" />
-            </div>
-            <div>
-                <flux:text size="sm" class="text-zinc-500">Total Allocated</flux:text>
-                <div class="font-mono text-2xl font-bold text-zinc-900 dark:text-white"
-                    x-data="{ display: 0, target: {{ $totalAllocated }} }" x-init="{{ $stepFn }}"
-                    x-text="'$' + display.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})">$0.00</div>
-            </div>
-        </flux:card>
-
-        <flux:card class="trading-card group flex items-center gap-3">
-            <div class="{{ $netPnl >= 0 ? 'stat-icon-up' : 'stat-icon-down' }} !rounded-xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                <flux:icon name="{{ $netPnl >= 0 ? 'arrow-trending-up' : 'arrow-trending-down' }}" class="size-5" />
-            </div>
-            <div>
-                <flux:text size="sm" class="text-zinc-500">Net P&amp;L</flux:text>
-                <div class="font-mono text-2xl font-bold {{ $netPnl >= 0 ? 'text-green-500' : 'text-red-500' }}"
-                    x-data="{ display: 0, target: {{ abs($netPnl) }} }" x-init="{{ $stepFn }}"
-                    x-text="'{{ $netPnl >= 0 ? '+' : '-' }}$' + display.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})">$0.00</div>
-            </div>
-        </flux:card>
-    </div>
 
     {{-- Trader Cards --}}
     <div class="flex flex-col gap-4">
@@ -88,11 +48,11 @@
                         <div class="flex items-start justify-between">
                             <div class="flex items-center gap-3">
                                 <div class="relative shrink-0">
-                                    <span class="flex size-10 rounded-full overflow-hidden bg-zinc-100 transition-transform duration-300 group-hover:scale-105">
+                                    <span class="flex size-14 rounded-full overflow-hidden bg-zinc-100 transition-transform duration-300 group-hover:scale-105">
                                         <img src="{{ $trader->avatarUrl() }}" alt="{{ $trader->name }}" loading="lazy"
                                             class="w-full h-full object-cover" onerror="avatarImgFallback(this, '{{ $trader->avatar_initials ?? substr($trader->name, 0, 2) }}')">
                                     </span>
-                                    <span class="absolute -bottom-0.5 -right-0.5 size-3 bg-green-500 rounded-full border-2 border-white dark:border-zinc-900"></span>
+                                    <span class="absolute -bottom-0.5 -right-0.5 size-3.5 bg-green-500 rounded-full border-2 border-white dark:border-zinc-900"></span>
                                 </div>
                                 <div class="min-w-0">
                                     <flux:heading size="sm" class="truncate">{{ $trader->name }}</flux:heading>

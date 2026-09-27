@@ -7,6 +7,10 @@
         <flux:button variant="primary" icon="plus" wire:click="openCreateModal">Add Market</flux:button>
     </div>
 
+    @php
+        $baseCurrency = fn (string $symbol) => preg_replace('/USDT$/', '', $symbol) ?: $symbol;
+    @endphp
+
     {{-- Markets Table --}}
     <flux:card class="p-0 overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
         <flux:table>
@@ -21,20 +25,21 @@
                 @forelse ($markets as $market)
                     <flux:table.row wire:key="market-{{ $market->id }}" class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
                         <flux:table.cell>
-                            <span class="font-mono font-semibold text-zinc-900 dark:text-white">{{ $market->symbol }}</span>
+                            <div class="flex items-center gap-2.5">
+                                <x-crypto-icon :currency="$baseCurrency($market->symbol)" :url="$marketIcons[$market->coingecko_id] ?? null" class="size-7" />
+                                <span class="font-mono font-semibold text-zinc-900 dark:text-white">{{ $market->symbol }}</span>
+                            </div>
                         </flux:table.cell>
                         <flux:table.cell class="text-zinc-600 dark:text-zinc-300">{{ $market->display_name }}</flux:table.cell>
                         <flux:table.cell>
-                            <flux:badge size="sm" color="{{ $market->is_active ? 'lime' : 'zinc' }}">
+                            <flux:badge size="sm" variant="solid" color="{{ $market->is_active ? 'green' : 'zinc' }}">
                                 {{ $market->is_active ? 'Active' : 'Disabled' }}
                             </flux:badge>
                         </flux:table.cell>
                         <flux:table.cell>
                             <div class="flex items-center gap-2">
-                                <flux:button size="sm" variant="{{ $market->is_active ? 'outline' : 'primary' }}" icon="{{ $market->is_active ? 'pause' : 'play' }}" wire:click="toggleActive({{ $market->id }})">
-                                    {{ $market->is_active ? 'Disable' : 'Enable' }}
-                                </flux:button>
-                                <flux:button size="sm" variant="outline" icon="pencil" wire:click="openEditModal({{ $market->id }})" aria-label="Edit {{ $market->symbol }}" />
+                                <flux:button size="sm" variant="outline" icon="{{ $market->is_active ? 'pause' : 'play' }}" wire:click="toggleActive({{ $market->id }})" aria-label="{{ $market->is_active ? 'Disable' : 'Enable' }} {{ $market->symbol }}" />
+                                <flux:button size="sm" variant="primary" color="blue" icon="pencil" wire:click="openEditModal({{ $market->id }})" aria-label="Edit {{ $market->symbol }}" />
                                 <flux:button size="sm" variant="danger" icon="trash" wire:click="confirmDelete({{ $market->id }})" aria-label="Delete {{ $market->symbol }}" />
                             </div>
                         </flux:table.cell>

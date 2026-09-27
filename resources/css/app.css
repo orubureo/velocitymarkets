@@ -43,21 +43,6 @@
     }
 }
 
-/* Admin control panel — amber/gold accent, deliberately unrelated to the teal
-   user brand so an admin can never mistake it for the customer-facing app.
-   Unlayered, so it overrides the layered `.dark` accent inherited from <html>. */
-.theme-admin {
-    --color-accent:            #b45309;
-    --color-accent-content:    #b45309;
-    --color-accent-foreground: #FFFFFF;
-}
-
-.dark .theme-admin {
-    --color-accent:            #f59e0b;
-    --color-accent-content:    #f59e0b;
-    --color-accent-foreground: #1A1A1A;
-}
-
 @layer base {
 
     *,
@@ -130,17 +115,13 @@ select:focus[data-flux-control] {
 
 /* Trading card glass effect for dark mode */
 .trading-card {
-    @apply border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 rounded-2xl shadow-sm transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5;
+    @apply border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 rounded-2xl shadow-sm transition-all duration-200;
 }
 
 /* Stat card icon badge */
 .stat-icon-up      { @apply p-2 rounded-xl bg-green-500/10 text-green-500; }
 .stat-icon-down    { @apply p-2 rounded-xl bg-red-500/10 text-red-500; }
 .stat-icon-brand   { @apply p-2 rounded-xl bg-teal-500/10 text-teal-500; }
-.theme-admin .stat-icon-brand {
-    background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
-    color: var(--color-accent);
-}
 .stat-icon-violet  { @apply p-2 rounded-xl bg-violet-500/10 text-violet-500; }
 .stat-icon-fuchsia { @apply p-2 rounded-xl bg-fuchsia-500/10 text-fuchsia-500; }
 .stat-icon-sky     { @apply p-2 rounded-xl bg-sky-500/10 text-sky-500; }

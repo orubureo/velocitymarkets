@@ -31,10 +31,8 @@
                         </flux:table.cell>
                         <flux:table.cell>
                             <div class="flex items-center gap-2">
-                                <flux:button size="sm" variant="{{ $wallet->is_active ? 'outline' : 'primary' }}" icon="{{ $wallet->is_active ? 'pause' : 'play' }}" wire:click="toggleActive({{ $wallet->id }})">
-                                    {{ $wallet->is_active ? 'Disable' : 'Enable' }}
-                                </flux:button>
-                                <flux:button size="sm" variant="outline" icon="pencil" wire:click="openEditModal({{ $wallet->id }})" aria-label="Edit {{ $wallet->currency }} address" />
+                                <flux:button size="sm" variant="outline" icon="{{ $wallet->is_active ? 'pause' : 'play' }}" wire:click="toggleActive({{ $wallet->id }})" aria-label="{{ $wallet->is_active ? 'Disable' : 'Enable' }} {{ $wallet->currency }} address" />
+                                <flux:button size="sm" variant="primary" color="blue" icon="pencil" wire:click="openEditModal({{ $wallet->id }})" aria-label="Edit {{ $wallet->currency }} address" />
                                 <flux:button size="sm" variant="danger" icon="trash" wire:click="confirmDelete({{ $wallet->id }})" aria-label="Delete {{ $wallet->currency }} address" />
                             </div>
                         </flux:table.cell>

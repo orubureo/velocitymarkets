@@ -10,7 +10,7 @@
     @fluxAppearance
 </head>
 
-<body class="theme-admin min-h-screen bg-zinc-950">
+<body class="min-h-screen bg-zinc-950">
 
     {{ $slot }}
 

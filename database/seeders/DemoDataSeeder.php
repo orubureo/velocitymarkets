@@ -249,7 +249,10 @@ class DemoDataSeeder extends Seeder
         Carbon $at,
         ?Admin $admin,
     ): float {
-        $approved = $status !== 'pending';
+        // Only deposits and withdrawals are ever actually reviewed by an admin
+        // in the real app — automated payouts (ROI, investment purchases, etc.)
+        // never carry a reviewer, so seeded data shouldn't pretend otherwise.
+        $approved = $status !== 'pending' && in_array($type, ['deposit', 'withdrawal'], true);
 
         WalletTransaction::create([
             'wallet_id' => $wallet->id,

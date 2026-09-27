@@ -81,8 +81,6 @@ class Traders extends Component
 
     public function render(): View
     {
-        $active = CopyTradeSubscription::where('user_id', Auth::id())->where('status', 'active')->get();
-
         return view('livewire.copy-trading.traders', [
             'traders' => Trader::where('is_active', true)
                 ->when($this->search, function ($q) {
@@ -94,9 +92,6 @@ class Traders extends Component
                 ->withCount(['subscriptions' => fn ($q) => $q->where('status', 'active')])
                 ->orderBy('sort_order')
                 ->get(),
-            'activeCount' => $active->count(),
-            'totalAllocated' => $active->sum('amount'),
-            'netPnl' => $active->sum(fn ($sub) => $sub->netPnl()),
             'selectedTrader' => $this->selectedTraderId ? Trader::find($this->selectedTraderId) : null,
             'balance' => Auth::guard('web')->user()->wallet->balance,
         ]);

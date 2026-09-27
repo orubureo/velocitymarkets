@@ -26,11 +26,13 @@ use App\Livewire\Marketing\Contact;
 use App\Livewire\News;
 use App\Livewire\Referral;
 use App\Livewire\Signal\Buy;
+use App\Livewire\Signal\MySignals;
 use App\Livewire\Support;
 use App\Livewire\Trade\Markets as TradeMarkets;
 use App\Livewire\Trade\Orders as TradeOrders;
 use App\Livewire\Trade\Place;
 use App\Livewire\Trade\Portfolio as TradePortfolio;
+use App\Livewire\Verification;
 use App\Livewire\Wallet\Index as WalletIndex;
 use App\Livewire\Wallet\Transactions;
 use App\Models\InvestmentPlan;
@@ -71,10 +73,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('investment-plans', Plans::class)->name('investment.plans');
     Route::get('upgrade-account', Upgrade::class)->name('upgrade-account');
     Route::get('buy-signal', Buy::class)->name('buy-signal');
+    Route::get('buy-signal/my-signals', MySignals::class)->name('buy-signal.my-signals');
     Route::get('copy-trading', Traders::class)->name('copy-trading');
     Route::get('copy-trading/subscriptions', Subscriptions::class)->name('copy-trading.subscriptions');
     Route::get('referral', Referral::class)->name('referral');
     Route::get('support', Support::class)->name('support');
+    Route::get('verification', Verification::class)->name('verification');
 });
 
 Route::middleware('auth')->group(function () {
@@ -122,6 +126,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
             return Storage::disk('local')->download($user->kyc_document_path);
         })->name('kyc.document');
+        Route::get('kyc/{user}/selfie', function (User $user) {
+            abort_unless(filled($user->kyc_selfie_path), 404);
+
+            return Storage::disk('local')->download($user->kyc_selfie_path);
+        })->name('kyc.selfie');
         Route::post('logout', function () {
             Auth::guard('admin')->logout();
             request()->session()->invalidate();

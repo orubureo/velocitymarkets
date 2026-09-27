@@ -27,8 +27,14 @@ class Subscriptions extends Component
 
     public function render(): View
     {
+        $mySubscriptions = CopyTradeSubscription::where('user_id', Auth::id())->with('trader')->latest()->get();
+        $active = $mySubscriptions->where('status', 'active');
+
         return view('livewire.copy-trading.subscriptions', [
-            'mySubscriptions' => CopyTradeSubscription::where('user_id', Auth::id())->with('trader')->latest()->get(),
+            'mySubscriptions' => $mySubscriptions,
+            'activeCount' => $active->count(),
+            'totalAllocated' => $active->sum('amount'),
+            'netPnl' => $active->sum(fn ($sub) => $sub->netPnl()),
         ]);
     }
 }

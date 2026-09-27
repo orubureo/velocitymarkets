@@ -43,7 +43,7 @@
                     <button
                         type="button"
                         wire:click="selectCurrency('{{ $currencyOption }}')"
-                        class="group flex items-center gap-3 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:-translate-y-0.5 hover:shadow-md transition-all text-left cursor-pointer {{ $currencyHover($currencyOption) }}"
+                        class="group flex items-center gap-3 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-all text-left cursor-pointer {{ $currencyHover($currencyOption) }}"
                     >
                         <x-crypto-icon :currency="$currencyOption" class="size-11 shrink-0 transition-transform duration-300 group-hover:scale-110" />
                         <div class="min-w-0">
@@ -76,7 +76,7 @@
                     <button
                         type="button"
                         wire:click="selectNetwork('{{ $networkOption }}')"
-                        class="flex flex-col items-center gap-1 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-teal-500 hover:bg-teal-500/5 hover:-translate-y-0.5 hover:shadow-md transition-all cursor-pointer"
+                        class="flex flex-col items-center gap-1 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-teal-500 hover:bg-teal-500/5 transition-all cursor-pointer"
                     >
                         <span class="font-semibold text-zinc-900 dark:text-white">{{ $networkOption }}</span>
                     </button>

@@ -55,6 +55,6 @@ class KycStatusNotification extends Notification
         }
 
         return $mail->line('Please resubmit your documents to try again.')
-            ->action('Resubmit KYC', route('profile.edit'));
+            ->action('Resubmit KYC', route('verification'));
     }
 }

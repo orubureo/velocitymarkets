@@ -1,10 +1,10 @@
-<div class="flex flex-col gap-6 stagger-children" x-data="{ stake: @entangle('stake'), balance: @js($balance ?? 0) }">
+<div class="flex flex-col gap-6 stagger-children" x-data="{ stake: @entangle('stake'), balance: @js($balance ?? 0), direction: 'rise' }">
     <div>
         <flux:link :href="route('trade')" wire:navigate class="inline-flex items-center gap-1 text-sm font-medium text-teal-500 mb-1">
             <flux:icon name="chevron-left" class="size-3.5" /> All Markets
         </flux:link>
         <flux:heading size="xl">Predict {{ $currentMarket->display_name ?? $asset }}</flux:heading>
-        <flux:text class="text-zinc-500 text-sm">Choose Rise or Fall and lock in your stake before it expires.</flux:text>
+        <flux:text class="text-zinc-500 text-sm">Choose Buy or Sell and lock in your stake before it expires.</flux:text>
     </div>
 
     @if (session('status'))
@@ -18,90 +18,20 @@
             return $market ? ($marketIcons[$market->coingecko_id] ?? null) : null;
         };
         $currentMarket = $markets->firstWhere('symbol', $asset);
+        $directionLabel = fn (string $direction) => $direction === 'rise' ? 'BUY' : 'SELL';
     @endphp
 
-    <div class="flex flex-col md:flex-row gap-6 items-start w-full">
-        {{-- Left Column: Trade Form (1/3 width) --}}
-        <div class="w-full md:w-1/3 shrink-0">
-            <flux:card class="trading-card flex flex-col gap-5">
-                {{-- Balance --}}
-                <div class="flex items-center justify-between">
-                    <div>
-                        <div class="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Available Balance</div>
-                        <div class="text-xl font-mono font-bold text-zinc-900 dark:text-white">${{ number_format($balance ?? 0, 2) }}</div>
-                    </div>
-                    <flux:link :href="route('wallet', ['tab' => 'deposit'])" wire:navigate
-                        class="!no-underline hover:!no-underline bg-teal-500/10 hover:bg-teal-500/20 px-3 py-1.5 rounded-full text-xs font-bold">
-                        + Deposit
-                    </flux:link>
-                </div>
-
-                {{-- Amount Input --}}
-                <div class="mt-2">
-                    <div class="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Amount (USD)</div>
-                    <flux:input wire:model="stake" type="number" step="0.01" icon="currency-dollar" class="font-mono" placeholder="0.00" />
-                </div>
-
-                {{-- Quick percentages --}}
-                <div class="grid grid-cols-2 gap-2">
-                    @foreach([25, 50, 75, 100] as $pct)
-                        <button type="button" @click="stake = (balance * {{ $pct / 100 }}).toFixed(2); $wire.set('stake', stake)"
-                            class="py-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 rounded-md hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">{{ $pct }}%</button>
-                    @endforeach
-                </div>
-
-                {{-- Quick amounts --}}
-                <div class="grid grid-cols-3 gap-2">
-                    @foreach([10, 25, 50, 100, 250, 500] as $amt)
-                        <button type="button" @click="stake = {{ $amt }}; $wire.set('stake', {{ $amt }})"
-                            class="py-1 text-[10px] sm:text-xs font-medium text-white bg-teal-500 rounded-md hover:bg-teal-600 transition-colors">${{ $amt }}</button>
-                    @endforeach
-                </div>
-
-                {{-- Duration --}}
-                <div class="mt-2">
-                    <div class="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Duration</div>
-                    <div class="grid grid-cols-3 gap-2">
-                        @foreach([1 => '1m', 5 => '5m', 15 => '15m', 30 => '30m', 60 => '1h', 240 => '4h'] as $val => $label)
-                            <button type="button" wire:click="$set('expiryMinutes', {{ $val }})"
-                                class="py-2 flex flex-col items-center justify-center rounded-md border transition-colors {{ $expiryMinutes == $val ? 'border-teal-500 bg-teal-500/10 text-teal-600 dark:text-teal-400' : 'border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800' }}">
-                                <span class="font-bold text-sm">{{ $label }}</span>
-                                <span class="text-[10px] text-green-500">+85%</span>
-                            </button>
-                        @endforeach
-                    </div>
-                </div>
-
-                {{-- Profit / Potential Return --}}
-                <div class="flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800 pt-5 mt-2">
-                    <div>
-                        <div class="text-xs text-zinc-500 mb-1">Profit rate</div>
-                        <div class="text-sm font-semibold text-zinc-900 dark:text-white">Potential return</div>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-xs text-green-500 font-bold mb-1">+85%</div>
-                        <div class="text-sm font-bold font-mono text-zinc-900 dark:text-white" x-text="'$' + (stake ? (parseFloat(stake) * 1.85).toFixed(2) : '0.00')"></div>
-                    </div>
-                </div>
-
-                {{-- Action Buttons --}}
-                <div class="grid grid-cols-2 gap-3 mt-2">
-                    <button wire:click="placeTrade('rise')"
-                        class="py-3 rounded-xl font-bold text-white bg-green-500 hover:bg-green-600 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-lg hover:shadow-green-500/20">
-                        <flux:icon name="arrow-trending-up" class="size-4" />
-                        Rise
-                    </button>
-                    <button wire:click="placeTrade('fall')"
-                        class="py-3 rounded-xl font-bold text-white bg-red-500 hover:bg-red-600 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-lg hover:shadow-red-500/20">
-                        <flux:icon name="arrow-trending-down" class="size-4" />
-                        Fall
-                    </button>
-                </div>
-            </flux:card>
-        </div>
-
-        {{-- Right Column: Chart and Trades (2/3 width) --}}
-        <div class="w-full md:w-2/3 flex flex-col gap-6">
+    {{--
+        Grid (not flex) so mobile stacking order (chart, then trade form, then
+        trade history) can differ from the desktop column layout (form left
+        spanning both rows, chart top-right, history bottom-right under the
+        chart) without duplicating markup. Chart and Positions each own their
+        row so Positions' desktop position stays tied to the chart's actual
+        height, not the form's — the form just spans both rows alongside them.
+    --}}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start w-full">
+        {{-- Chart (top on mobile; top-right column on desktop) --}}
+        <div class="flex flex-col gap-6 md:col-start-2 md:col-span-2 md:row-start-1">
             {{-- Asset Header --}}
             <flux:card class="trading-card flex items-center justify-between !py-4">
                 <div class="flex items-center gap-3 min-w-0">
@@ -184,9 +114,101 @@
                     </div>
                 </div>
             </flux:card>
+        </div>
 
-            {{-- Positions --}}
-            <div class="flex flex-col gap-2">
+        {{-- Trade Form (middle on mobile; left column spanning both rows on desktop) --}}
+        <div class="md:col-start-1 md:col-span-1 md:row-start-1 md:row-span-2">
+            <flux:card class="trading-card flex flex-col gap-5">
+                {{-- Buy / Sell toggle --}}
+                <div class="grid grid-cols-2 gap-2 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-xl">
+                    <button type="button" @click="direction = 'rise'"
+                        :class="direction === 'rise' ? 'bg-white dark:bg-zinc-900 text-green-600 dark:text-green-400 shadow-sm' : 'text-zinc-500 dark:text-zinc-400'"
+                        class="py-2 rounded-lg font-bold text-sm transition-all">
+                        Buy
+                    </button>
+                    <button type="button" @click="direction = 'fall'"
+                        :class="direction === 'fall' ? 'bg-white dark:bg-zinc-900 text-red-600 dark:text-red-400 shadow-sm' : 'text-zinc-500 dark:text-zinc-400'"
+                        class="py-2 rounded-lg font-bold text-sm transition-all">
+                        Sell
+                    </button>
+                </div>
+
+                {{-- Balance --}}
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Available Balance</div>
+                        <div class="text-xl font-mono font-bold text-zinc-900 dark:text-white">${{ number_format($balance ?? 0, 2) }}</div>
+                    </div>
+                    <flux:link :href="route('wallet', ['tab' => 'deposit'])" wire:navigate
+                        class="!no-underline hover:!no-underline bg-teal-500/10 hover:bg-teal-500/20 px-3 py-1.5 rounded-full text-xs font-bold">
+                        + Deposit
+                    </flux:link>
+                </div>
+
+                {{-- Amount Input --}}
+                <div class="mt-2">
+                    <div class="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Amount (USD)</div>
+                    <flux:input wire:model="stake" type="number" step="0.01" icon="currency-dollar" class="font-mono" placeholder="0.00" />
+                </div>
+
+                {{-- Quick percentages --}}
+                <div class="grid grid-cols-2 gap-2">
+                    @foreach([25, 50, 75, 100] as $pct)
+                        <button type="button" @click="stake = (balance * {{ $pct / 100 }}).toFixed(2); $wire.set('stake', stake)"
+                            class="py-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 rounded-md hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">{{ $pct }}%</button>
+                    @endforeach
+                </div>
+
+                {{-- Quick amounts --}}
+                <div class="grid grid-cols-3 gap-2">
+                    @foreach([10, 25, 50, 100, 250, 500] as $amt)
+                        <button type="button" @click="stake = {{ $amt }}; $wire.set('stake', {{ $amt }})"
+                            class="py-1 text-[10px] sm:text-xs font-medium text-white bg-teal-500 rounded-md hover:bg-teal-600 transition-colors">${{ $amt }}</button>
+                    @endforeach
+                </div>
+
+                {{-- Duration --}}
+                <div class="mt-2">
+                    <div class="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Duration</div>
+                    <div class="grid grid-cols-3 gap-2">
+                        @foreach([1 => '1m', 5 => '5m', 15 => '15m', 30 => '30m', 60 => '1h', 240 => '4h'] as $val => $label)
+                            <button type="button" wire:click="$set('expiryMinutes', {{ $val }})"
+                                class="py-2 flex flex-col items-center justify-center rounded-md border transition-colors {{ $expiryMinutes == $val ? 'border-teal-500 bg-teal-500/10 text-teal-600 dark:text-teal-400' : 'border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800' }}">
+                                <span class="font-bold text-sm">{{ $label }}</span>
+                                <span class="text-[10px] text-green-500">+85%</span>
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+
+                {{-- Profit / Potential Return --}}
+                <div class="flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800 pt-5 mt-2">
+                    <div>
+                        <div class="text-xs text-zinc-500 mb-1">Profit rate</div>
+                        <div class="text-sm font-semibold text-zinc-900 dark:text-white">Potential return</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs text-green-500 font-bold mb-1">+85%</div>
+                        <div class="text-sm font-bold font-mono text-zinc-900 dark:text-white" x-text="'$' + (stake ? (parseFloat(stake) * 1.85).toFixed(2) : '0.00')"></div>
+                    </div>
+                </div>
+
+                {{-- Action Button — label/color follow the Buy/Sell toggle above --}}
+                <button type="button" x-on:click="$wire.placeTrade(direction)"
+                    :class="direction === 'rise'
+                        ? 'bg-green-500 hover:bg-green-600 hover:shadow-green-500/20'
+                        : 'bg-red-500 hover:bg-red-600 hover:shadow-red-500/20'"
+                    class="py-3 rounded-xl font-bold text-white hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-lg mt-2">
+                    <flux:icon name="arrow-trending-up" class="size-4" x-show="direction === 'rise'" />
+                    <flux:icon name="arrow-trending-down" class="size-4" x-show="direction === 'fall'" x-cloak />
+                    <span x-show="direction === 'rise'">Buy</span>
+                    <span x-show="direction === 'fall'" x-cloak>Sell</span>
+                </button>
+            </flux:card>
+        </div>
+
+        {{-- Trade history (last on mobile; bottom-right column, under the chart, on desktop) --}}
+        <div class="flex flex-col gap-2 md:col-start-2 md:col-span-2 md:row-start-2">
                 <div class="flex items-center gap-6 border-b border-zinc-200 dark:border-zinc-700 pb-2">
                     <button type="button" wire:click="$set('positionsTab', 'active')"
                         class="text-sm font-semibold pb-2 -mb-[9px] cursor-pointer transition-colors {{ $positionsTab === 'active' ? 'text-teal-500 border-b-2 border-teal-500' : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300' }}">
@@ -207,7 +229,7 @@
                                     <div>
                                         <div class="font-bold text-sm text-zinc-900 dark:text-white flex items-center gap-1.5">
                                             {{ $trade->asset }}
-                                            <flux:badge size="sm" color="{{ $trade->direction === 'rise' ? 'lime' : 'red' }}">{{ strtoupper($trade->direction) }}</flux:badge>
+                                            <flux:badge size="sm" color="{{ $trade->direction === 'rise' ? 'lime' : 'red' }}">{{ $directionLabel($trade->direction) }}</flux:badge>
                                         </div>
                                         <div class="text-xs text-zinc-500">Entry ${{ number_format($trade->entry_price, 4) }}</div>
                                     </div>
@@ -231,7 +253,7 @@
                                     <div>
                                         <div class="font-bold text-sm text-zinc-900 dark:text-white flex items-center gap-1.5">
                                             {{ $trade->asset }}
-                                            <flux:badge size="sm" color="{{ $trade->direction === 'rise' ? 'lime' : 'red' }}">{{ strtoupper($trade->direction) }}</flux:badge>
+                                            <flux:badge size="sm" color="{{ $trade->direction === 'rise' ? 'lime' : 'red' }}">{{ $directionLabel($trade->direction) }}</flux:badge>
                                         </div>
                                         <div class="text-xs text-zinc-500">
                                             @if ($trade->status === 'voided')
@@ -264,7 +286,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     @push('scripts')
         <script src="https://s3.tradingview.com/tv.js"></script>

@@ -11,6 +11,7 @@ class SignalTier extends Model
         'name',
         'description',
         'percent',
+        'price',
         'win_rate_percent',
         'roi_percent',
         'duration_days',
@@ -20,6 +21,7 @@ class SignalTier extends Model
 
     protected $casts = [
         'percent' => 'integer',
+        'price' => 'decimal:2',
         'win_rate_percent' => 'decimal:2',
         'roi_percent' => 'decimal:2',
         'is_active' => 'boolean',

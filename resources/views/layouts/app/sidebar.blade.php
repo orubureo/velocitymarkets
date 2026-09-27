@@ -217,6 +217,20 @@
                 </span>
             </a>
 
+            <a href="{{ route('verification') }}" wire:navigate
+                x-bind:title="collapsed ? '{{ __('Verification') }}' : ''"
+                class="group relative flex items-center gap-3.5 px-3 py-3 rounded-xl text-base font-bold transition-all duration-200 hover:translate-x-0.5 whitespace-nowrap
+                    {{ request()->routeIs('verification') ? 'bg-teal-500/10 text-teal-700 dark:text-teal-400' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 hover:text-zinc-900 dark:hover:text-zinc-50' }}">
+                <span x-show="{{ request()->routeIs('verification') ? 'true' : 'false' }}"
+                    class="nav-indicator absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-teal-500 animate-glow-pulse"></span>
+                <flux:icon name="identification" variant="{{ request()->routeIs('verification') ? 'solid' : 'outline' }}" class="size-6 shrink-0 transition-transform duration-200 group-hover:scale-110" />
+                <span x-show="!collapsed" x-transition:enter="transition-opacity duration-150 delay-100"
+                    x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                    x-transition:leave="transition-opacity duration-75" x-transition:leave-end="opacity-0">
+                    {{ __('Verification') }}
+                </span>
+            </a>
+
             <a href="{{ route('profile.edit') }}" wire:navigate
                 x-bind:title="collapsed ? '{{ __('Settings') }}' : ''"
                 class="group relative flex items-center gap-3.5 px-3 py-3 rounded-xl text-base font-bold transition-all duration-200 hover:translate-x-0.5 whitespace-nowrap
@@ -325,6 +339,7 @@
                     __('Services') => [
                         ['icon' => 'user-group', 'route' => 'referral', 'label' => __('Referral')],
                         ['icon' => 'lifebuoy', 'route' => 'support', 'label' => __('Support')],
+                        ['icon' => 'identification', 'route' => 'verification', 'label' => __('Verification')],
                         ['icon' => 'cog', 'route' => 'profile.edit', 'label' => __('Settings')],
                     ],
                 ];

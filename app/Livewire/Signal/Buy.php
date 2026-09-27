@@ -44,9 +44,9 @@ class Buy extends Component
             // read the same pre-debit balance and each debit against it.
             $wallet = Wallet::where('user_id', $userId)->lockForUpdate()->firstOrFail();
 
-            $amount = round((float) $wallet->balance * $tier->percent / 100, 2);
+            $amount = (float) $tier->price;
 
-            if ($amount <= 0) {
+            if ($amount <= 0 || (float) $wallet->balance < $amount) {
                 return null;
             }
 
@@ -92,7 +92,6 @@ class Buy extends Component
     {
         return view('livewire.signal.buy', [
             'tiers' => SignalTier::where('is_active', true)->orderBy('sort_order')->get(),
-            'mySignals' => UserSignal::where('user_id', Auth::id())->with('tier')->latest()->get(),
             'selectedTier' => $this->selectedTierId ? SignalTier::where('is_active', true)->find($this->selectedTierId) : null,
             'balance' => Auth::guard('web')->user()->wallet->balance,
         ]);

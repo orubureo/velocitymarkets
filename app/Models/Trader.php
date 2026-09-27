@@ -4,12 +4,42 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\JpegEncoder;
+use Intervention\Image\ImageManager;
 
 class Trader extends Model
 {
+    /**
+     * Uploaded trader photos routinely arrive as multi-megapixel, multi-MB
+     * camera/stock originals (seen up to ~6000px and 2MB) — displayed at a
+     * tiny avatar size, browsers downscale these inconsistently and the page
+     * ships megabytes for a thumbnail. This normalizes any source image into
+     * a small, sharp, EXIF-corrected square JPEG and stores it on the public
+     * disk, returning the relative path to save as avatar_path.
+     */
+    public static function storeAvatarFromPath(string $sourcePath): string
+    {
+        $manager = new ImageManager(new Driver);
+
+        $encoded = $manager->decodePath($sourcePath)
+            ->orient()
+            ->cover(500, 500)
+            ->encode(new JpegEncoder(quality: 85));
+
+        $path = 'traders/'.Str::random(40).'.jpg';
+
+        Storage::disk('public')->put($path, (string) $encoded);
+
+        return $path;
+    }
+
     protected $fillable = [
         'name',
         'avatar_initials',
+        'avatar_path',
         'tagline',
         'bio',
         'tier',
@@ -53,16 +83,16 @@ class Trader extends Model
     {
         return match ($this->tier) {
             'elite' => 'violet',
-            'pro' => 'lime',
-            default => 'zinc',
+            'pro' => 'green',
+            'verified' => 'cyan',
         };
     }
 
     public function riskColor(): string
     {
         return match ($this->risk_level) {
-            'low' => 'sky',
-            'medium' => 'amber',
+            'low' => 'blue',
+            'medium' => 'yellow',
             'high' => 'red',
             default => 'zinc',
         };
@@ -84,13 +114,23 @@ class Trader extends Model
     }
 
     /**
-     * A deterministic, stylized profile image for this trader — never a real
-     * person's photo, generated from their name so it stays consistent across
-     * reloads. Views must handle load failure (see resources/js/app.js
-     * avatarImgFallback) since this is a live third-party request.
+     * The admin-uploaded profile photo, or — when none has been set — a
+     * deterministic, stylized placeholder generated from the trader's name so
+     * it stays consistent across reloads. Views must handle load failure (see
+     * resources/js/app.js avatarImgFallback) since the placeholder is a live
+     * third-party request.
      */
     public function avatarUrl(): string
     {
+        if ($this->avatar_path) {
+            // A root-relative path (not Storage::url(), which bakes in the
+            // fixed APP_URL host) so the image still resolves correctly when
+            // the app is reached through a different origin than APP_URL —
+            // e.g. Herd's share/tunnel URL on a phone, which can't resolve
+            // the local .test hostname that Storage::url() would hardcode.
+            return '/storage/'.$this->avatar_path;
+        }
+
         return 'https://api.dicebear.com/9.x/notionists/svg?seed='.urlencode($this->name);
     }
 }

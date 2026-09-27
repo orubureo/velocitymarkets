@@ -14,6 +14,7 @@ use App\Notifications\PasswordResetByAdminNotification;
 use App\Notifications\WalletAdjustmentNotification;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
@@ -245,7 +246,15 @@ class UserShow extends Component
 
         $userId = $this->user->id;
 
-        User::findOrFail($userId)->delete();
+        $user = User::findOrFail($userId);
+
+        // Not cleaned up by any DB cascade — these live on disk, keyed by
+        // path, not by a foreign key the users table's own deletion touches.
+        collect([$user->kyc_document_path, $user->kyc_selfie_path])
+            ->filter()
+            ->each(fn (string $path) => Storage::disk('local')->delete($path));
+
+        $user->delete();
 
         $this->redirect(route('admin.users'), navigate: true);
     }
